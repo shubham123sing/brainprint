@@ -17,7 +17,7 @@ Everything (brains, beliefs, quotes, styles, questions, responses, concepts, Wik
 ## Quick start
 Needs **Node 18+** only; the graph is already in the repo. Prebuilt Relate binaries ship for Windows x64, Linux x64/arm64 and macOS.
 ```bash
-git clone https://github.com/anjalisingh1818/brainprint && cd brainprint/web
+git clone https://github.com/shubham123sing/brainprint && cd brainprint/web
 npm install
 npm run dev        # → http://localhost:3000  (Brain Panel · Brain Library)
 ```
