@@ -13,6 +13,7 @@
 | 4 | Ask the panel live | New problem: a university AI tutor costing ₹499 a month that records study habits. Every brain answers in its own voice, then the synthesis: agree, clash, joint solution. | Brain Panel, GraphRAG, synthesis |
 | 5 | **Use case: startup.** An earlier question | "Freelancers hate bookkeeping": answers and "Beliefs it relied on" | stored panel results |
 | 6 | **Use case: pitch testing.** Point by point | The jargon-heavy Ledgerly v1 pitch: does each point land with each brain? Click a cell to see why. | point matrix, teaching |
+| 6b | **Use case: average brain response.** TRIBE v2 on Ledgerly v2 | Per-second network heatmap, then the sentence table: the "200 freelancers saved four hours" line lifts attention and language and every persona agrees; the funding line puts off two brains | TRIBE v2 + Relate join |
 | 7 | World knowledge | Wikidata-linked concepts and bridges for the AI tutor question | Wikidata / Wikipedia |
 | 8 | The graph | "Panel as a graph": brains → beliefs → concepts in one Relate file | Relate |
 | 9 | Outro card | the honest note: brains are models of the words they were given | – |

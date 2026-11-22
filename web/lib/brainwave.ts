@@ -102,16 +102,19 @@ export async function importResults() {
         return { ...m, id: `${ideaId}:m${i + 1}`, order: i + 1, z: Object.fromEntries(NETWORKS.map((n, k) => [n, zs[k]])) };
       });
 
-      // link each sentence to the idea point it says
+      // link each sentence to the idea point it says: best pairs first, each point and each sentence used at most once
       const claims = q(`MATCH (:Idea {id: $id})-[:HAS_CLAIM]->(c:Claim) RETURN c.id AS id, c.text AS text`, { id: ideaId });
       const links: { m: string; c: string; sim: number }[] = [];
       if (claims.length && ms.length) {
         const vecs = await embed([...ms.map((m) => m.text), ...claims.map((c) => String(c.text))]);
-        ms.forEach((m, i) => {
-          let best = -1, bi = -1;
-          claims.forEach((_, j) => { const s = cos(vecs[i], vecs[ms.length + j]); if (s > best) { best = s; bi = j; } });
-          if (best >= LINK_SIM) links.push({ m: m.id, c: String(claims[bi].id), sim: round(best) });
-        });
+        const pairs = ms.flatMap((_, i) => claims.map((_, j) => ({ i, j, s: cos(vecs[i], vecs[ms.length + j]) })))
+          .filter((p) => p.s >= LINK_SIM).sort((a, b) => b.s - a.s);
+        const usedM = new Set<number>(), usedC = new Set<number>();
+        for (const p of pairs) {
+          if (usedM.has(p.i) || usedC.has(p.j)) continue;
+          usedM.add(p.i); usedC.add(p.j);
+          links.push({ m: ms[p.i].id, c: String(claims[p.j].id), sim: round(p.s) });
+        }
       }
       const acts = ms.flatMap((m) => Object.entries(m.z).filter(([n, z]) => n !== "other" && z >= ACTIVE_Z)
         .sort((x, y) => y[1] - x[1]).slice(0, 2).map(([n, z]) => ({ m: m.id, n, z })));

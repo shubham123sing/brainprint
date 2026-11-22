@@ -1,23 +1,62 @@
 {
   "_about": "Final order of the video. Each scene: narration (spoken + subtitles) and the recorded scene it shows. Edit spans are [start, end, speed] in seconds of the raw recording.",
   "scenes": [
-    { "id": "title", "card": "title",
-      "say": "What would different kinds of people say about your idea, before you ever ask them? This is BrainPrint." },
-    { "id": "home", "rec": "home",
-      "say": "BrainPrint is a panel of persona brains. Each brain models one mindset and shows how accurate it really is. They all live in one Relate graph." },
-    { "id": "build", "rec": "build", "label": "Use case 1 · Education",
-      "say": "Let's add a new brain for an education use case: a budget-conscious student. No forms. I just talk as that person. Each message becomes beliefs, and every belief keeps the exact words that support it. If the model can't quote it, the belief is dropped. The brain also learns how this person talks, and what they care about. Price and discounts go up. Data being sold goes strongly down. Every belief becomes a node in the graph." },
-    { "id": "quiz", "rec": "quiz", "label": "Test every brain",
-      "say": "Brains are tested, not trusted. In Quiz mode, the cautious investor locks in its prediction before I answer. It predicted agree, using two earlier answers from the graph, and it was right. Cross-validation puts this brain at sixty-four percent, against a fifty-nine percent baseline." },
-    { "id": "live", "rec": "live", "label": "Ask the panel",
-      "say": "Now the real question. The university wants an AI tutor app at four hundred and ninety-nine rupees a month, which records study habits. I ask all four brains at once. Each one answers in its own voice, grounded in its own beliefs. The student hates data being sold, and wants a discount. The investor wants proof that students learn better. The CFO wants hard ROI, and an Excel export. Then the panel is synthesised: where they agree, where they clash on pricing, and a joint solution. A free pilot you can cancel any time, no data sold, and pricing tied to real results." },
-    { "id": "earlier", "rec": "earlier", "label": "Use case 2 · Startup problem",
-      "say": "The same panel works for startups. For freelancers who hate bookkeeping, every brain shows the beliefs it relied on, in the words it was trained with." },
-    { "id": "matrix", "rec": "matrix", "label": "Use case 3 · Pitch testing",
-      "say": "And for pitch testing. Point by point, the jargon-heavy Ledgerly pitch puts off the investor and the CFO, while the plain line, five hours a month on receipts, lands with almost everyone. Click any cell to see why, and teach the brain if it's wrong." },
-    { "id": "knowledge", "rec": "knowledge", "label": "World knowledge + Relate graph",
-      "say": "Concepts are linked to Wikidata and Wikipedia, so ideas connect to world knowledge. And here is the whole panel as one graph: brains, beliefs, concepts and questions, in a single Relate file that every answer is queried from." },
-    { "id": "outro", "card": "outro",
-      "say": "BrainPrint. Brains are models of the words you give them, not real people. Build them, test them, and ask them all at once." }
+    {
+      "id": "title",
+      "card": "title",
+      "say": "What would different kinds of people say about your idea, before you ever ask them? This is BrainPrint."
+    },
+    {
+      "id": "home",
+      "rec": "home",
+      "say": "BrainPrint is a panel of persona brains. Each brain models one mindset and shows how accurate it really is. They all live in one Relate graph."
+    },
+    {
+      "id": "build",
+      "rec": "build",
+      "label": "Use case 1 · Education",
+      "say": "Let's add a new brain for an education use case: a budget-conscious student. No forms. I just talk as that person. Each message becomes beliefs, and every belief keeps the exact words that support it. If the model can't quote it, the belief is dropped. The brain also learns how this person talks, and what they care about. Price and discounts go up. Data being sold goes strongly down. Every belief becomes a node in the graph."
+    },
+    {
+      "id": "quiz",
+      "rec": "quiz",
+      "label": "Test every brain",
+      "say": "Brains are tested, not trusted. In Quiz mode, the cautious investor locks in its prediction before I answer. It predicted agree, using two earlier answers from the graph, and it was right. Cross-validation puts this brain at sixty-four percent, against a fifty-nine percent baseline."
+    },
+    {
+      "id": "live",
+      "rec": "live",
+      "label": "Ask the panel",
+      "say": "Now the real question. The university wants an AI tutor app at four hundred and ninety-nine rupees a month, which records study habits. I ask all four brains at once. Each one answers in its own voice, grounded in its own beliefs. The student hates data being sold, and wants a discount. The investor wants proof that students learn better. The CFO wants hard ROI, and an Excel export. Then the panel is synthesised: where they agree, where they clash on pricing, and a joint solution. A free pilot you can cancel any time, no data sold, and pricing tied to real results."
+    },
+    {
+      "id": "earlier",
+      "rec": "earlier",
+      "label": "Use case 2 · Startup problem",
+      "say": "The same panel works for startups. For freelancers who hate bookkeeping, every brain shows the beliefs it relied on, in the words it was trained with."
+    },
+    {
+      "id": "matrix",
+      "rec": "matrix",
+      "label": "Use case 3 · Pitch testing",
+      "say": "And for pitch testing. Point by point, the jargon-heavy Ledgerly pitch puts off the investor and the CFO, while the plain line, five hours a month on receipts, lands with almost everyone. Click any cell to see why, and teach the brain if it's wrong."
+    },
+    {
+      "id": "brainwave",
+      "rec": "brainwave",
+      "label": "Use case 4 · Average brain response (TRIBE v2)",
+      "say": "There is a second view. Meta's TRIBE v2 predicts how an average brain responds to the revised Ledgerly pitch, second by second. Red is above this pitch's own average, blue below. The line about two hundred freelancers saving four hours lifts attention and language, and every persona brain agrees with it. The funding line lights up the default mode network, and puts off two brains. Both views live in one Relate graph."
+    },
+    {
+      "id": "knowledge",
+      "rec": "knowledge",
+      "label": "World knowledge + Relate graph",
+      "say": "Concepts are linked to Wikidata and Wikipedia, so ideas connect to world knowledge. And here is the whole panel as one graph: brains, beliefs, concepts and questions, in a single Relate file that every answer is queried from."
+    },
+    {
+      "id": "outro",
+      "card": "outro",
+      "say": "BrainPrint. Brains are models of the words you give them, not real people. Build them, test them, and ask them all at once."
+    }
   ]
 }

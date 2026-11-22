@@ -240,6 +240,24 @@ const SCENES = {
     }
     await idle(2000);
   },
+
+  // TRIBE v2 average-brain response for the revised Ledgerly pitch, next to the persona reactions
+  async brainwave({ page, mark, move, show, idle }) {
+    await page.goto(BASE + "/"); await page.waitForSelector(".blist .pitch");
+    await page.locator(".blist .pitch", { hasText: "Ledgerly v2" }).click();
+    await page.waitForSelector('h2:has-text("Average brain response")', { timeout: 60000 });
+    await idle(800);
+    await show(page.locator("h2", { hasText: "Average brain response" }), 2500, "start");
+    mark("heatmap");
+    const hover = async (loc, ms) => { await move(loc); await loc.hover(); await idle(ms); };
+    const cells = page.locator(".bwcell"); // first row = language, one cell per second
+    for (const k of [4, 12, 20, 29, 36, 42]) await hover(cells.nth(k), 1100);
+    mark("table");
+    const rows = page.locator(".bwtable tbody tr");
+    await show(rows.nth(6), 800);
+    await hover(rows.nth(6), 4500);
+    await hover(rows.nth(7), 4500);
+  },
 };
 
 for (const name of process.argv.slice(2)) {

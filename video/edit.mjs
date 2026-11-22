@@ -28,6 +28,7 @@ const SPANS = {
   earlier: [[0, 19.9, 1.8]],
   matrix: [[0, 4.3, 2], [4.3, 18.2, 1]],
   knowledge: [[0, 4, 2], [4, 13.6, 1.9], [13.6, 18.5, 0.75]],
+  brainwave: [[0, 4.3, 2], [4.3, 15.8, 1.2], [15.8, 27.4, 1]],
 };
 const CARD_MIN = { title: 6, outro: 8.5 };
 
@@ -38,7 +39,7 @@ const CARD_CSS = `body{margin:0;width:1920px;height:1080px;display:flex;flex-dir
 const CARDS = {
   title: `<h1>Brain<span>Print</span></h1><p>Ask many minds at once.</p><p class="s">Persona brains built by talking · one Relate graph</p>`,
   outro: `<h1>Brain<span>Print</span></h1><p>Build brains by talking. Test them. Ask them all at once.</p>
-    <p class="s">Brains are models of the words you give them, not real people.<br/>Built with Relate · Groq · Wikidata</p>`,
+    <p class="s">Brains are models of the words you give them, not real people.<br/>Built with Relate · Groq · TRIBE v2 · Wikidata</p>`,
 };
 
 async function renderCards() {
