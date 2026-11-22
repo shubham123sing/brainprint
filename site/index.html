@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BrainPrint · Ask many minds at once</title>
+<meta name="description" content="Persona brains built by talking, tested against a baseline, and asked all at once, with Meta's TRIBE v2 average-brain response, all in one Relate graph." />
+<meta property="og:title" content="BrainPrint · Ask many minds at once" />
+<meta property="og:description" content="Persona brains built by talking, asked all at once, on one Relate graph." />
+<meta property="og:image" content="img/01_thumbnail.jpg" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #5d5d66; --line: #e2e2dd; --accent: #5b5bd6; --hi: #d6453d; --good: #2f8f3c;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f0f13; --panel: #18181e; --ink: #ececf1; --muted: #a2a2b0; --line: #2c2c35; --accent: #8f8fff; --hi: #e5604f; --good: #5cc46a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f0f13; --panel: #18181e; --ink: #ececf1; --muted: #a2a2b0; --line: #2c2c35; --accent: #8f8fff; --hi: #e5604f; --good: #5cc46a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+header.hero { padding: 64px 0 28px; background: radial-gradient(circle at 15% 0%, color-mix(in oklab, var(--accent) 28%, transparent), transparent 60%); }
+h1 { font-size: clamp(48px, 9vw, 96px); line-height: 1; margin: 0; letter-spacing: -2px; }
+h1 span { color: var(--accent); }
+.tag { font-size: clamp(20px, 3vw, 28px); color: var(--muted); margin: 12px 0 20px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 14px; font-size: 15px; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-block; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: 600; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+video { width: 100%; border-radius: 14px; border: 1px solid var(--line); background: #000; display: block; }
+section { padding: 36px 0; }
+h2 { font-size: 30px; margin: 0 0 14px; letter-spacing: -0.5px; }
+.lead { color: var(--muted); max-width: 760px; margin-top: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.card img { width: 100%; display: block; border-bottom: 1px solid var(--line); }
+.card .b { padding: 14px 16px; }
+.card h3 { margin: 0 0 6px; font-size: 19px; }
+.card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 16px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; font-size: 14px; }
+td.num { font-variant-numeric: tabular-nums; }
+.up { color: var(--good); font-weight: 600; }
+.eq { color: var(--muted); }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; overflow-x: auto; font-size: 14px; line-height: 1.5; }
+.note { border-left: 4px solid var(--accent); background: var(--panel); padding: 12px 16px; border-radius: 0 10px 10px 0; color: var(--muted); }
+footer { padding: 30px 0 50px; color: var(--muted); font-size: 15px; border-top: 1px solid var(--line); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1>Brain<span>Print</span></h1>
+    <p class="tag">Ask many minds at once.</p>
+    <div class="chips">
+      <span class="chip">🗣️ Persona brains built by talking</span>
+      <span class="chip">✅ Tested against a baseline</span>
+      <span class="chip">🧠 Meta TRIBE v2</span>
+      <span class="chip">🕸️ One Relate graph</span>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="#demo">▶ Watch the demo</a>
+      <a class="btn" href="https://github.com/shubham123sing/brainprint">GitHub repo</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="demo">
+    <video controls preload="metadata" poster="img/01_thumbnail.jpg">
+      <source src="brainprint_demo.mp4" type="video/mp4" />
+      Your browser can't play this video. <a href="brainprint_demo.mp4">Download it</a>.
+    </video>
+  </section>
+
+  <section>
+    <h2>The idea</h2>
+    <p class="lead">Every idea meets a room full of different people: a skeptical CFO, a cautious investor, a busy freelancer, a student counting every rupee. BrainPrint lets you build a brain for each of them just by talking, test how well each brain predicts, and put a question or a pitch in front of all of them at once.</p>
+    <div class="grid">
+      <div class="card"><img src="img/04_talk_beliefs.jpg" alt="Talk mode: beliefs extracted with the exact quotes that support them" loading="lazy" />
+        <div class="b"><h3>1 · Build a brain by talking</h3><p>Every belief keeps the exact words that support it. If the model can't quote it, the belief is dropped. The brain also learns how the person talks.</p></div></div>
+      <div class="card"><img src="img/05_quiz_reveal.jpg" alt="Quiz: the brain's locked prediction is revealed as correct" loading="lazy" />
+        <div class="b"><h3>2 · Test it before you trust it</h3><p>The brain locks in a prediction before you answer, so its accuracy is measured honestly against a baseline.</p></div></div>
+      <div class="card"><img src="img/02_panel_answers.jpg" alt="Panel: each brain answers in its own voice" loading="lazy" />
+        <div class="b"><h3>3 · Ask the whole panel</h3><p>Each brain answers in its own voice, lists its concerns and what it would do, and shows the beliefs it relied on.</p></div></div>
+      <div class="card"><img src="img/03_synthesis.jpg" alt="Synthesis: where the brains agree and clash" loading="lazy" />
+        <div class="b"><h3>4 · Agree, clash, solve</h3><p>A synthesis shows where they agree, where they clash, and a joint solution that covers everyone's concerns.</p></div></div>
+      <div class="card"><img src="img/06_point_matrix.jpg" alt="Point-by-point matrix for a pitch" loading="lazy" />
+        <div class="b"><h3>5 · Test a pitch point by point</h3><p>See which sentence lands and which puts each brain off. Click a cell to see why, and teach the brain if it's wrong.</p></div></div>
+      <div class="card"><img src="img/09_graph.jpg" alt="The panel as one Relate graph" loading="lazy" />
+        <div class="b"><h3>6 · One graph behind everything</h3><p>Brains, beliefs, quotes, concepts, questions, answers and Wikidata links all live in one Relate file.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Average brain response (TRIBE v2)</h2>
+    <p class="lead">Persona brains tell you what a <i>kind of person</i> thinks. Meta's TRIBE v2 adds a second view: how an <b>average brain</b> is predicted to respond, second by second, while hearing the same pitch. BrainPrint lines both up, sentence by sentence.</p>
+    <div class="two">
+      <div class="card"><img src="img/07_tribe_heatmap.jpg" alt="TRIBE v2 heatmap of 6 brain networks over time" loading="lazy" /></div>
+      <div class="card"><img src="img/08_tribe_sentences.jpg" alt="Each sentence's strongest network next to the persona reactions" loading="lazy" /></div>
+    </div>
+    <p>In the revised Ledgerly pitch, <b>"our first 200 freelancers saved four hours a month"</b> lifts attention and language above the pitch's own average, and every persona agrees with it. The funding line raises the default-mode network and puts off two brains.</p>
+  </section>
+
+  <section>
+    <h2>Measured, not claimed</h2>
+    <p class="lead">4-fold cross-validation: hide a quarter of a brain's answers, predict them from the rest, and compare with always guessing its most common answer.</p>
+    <table>
+      <thead><tr><th>Brain</th><th>Accuracy</th><th>Baseline</th><th>Answers</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Skeptical CFO</td><td class="num">100%</td><td class="num">73%</td><td class="num">11</td><td class="up">above</td></tr>
+        <tr><td>Cautious investor</td><td class="num">64%</td><td class="num">59%</td><td class="num">22</td><td class="up">above</td></tr>
+        <tr><td>Budget-conscious student</td><td class="num">57%</td><td class="num">48%</td><td class="num">21</td><td class="up">above</td></tr>
+        <tr><td>Busy freelancer</td><td class="num">64%</td><td class="num">64%</td><td class="num">22</td><td class="eq">equal</td></tr>
+      </tbody>
+    </table>
+    <p class="eq" style="font-size:15px">Small samples: one or two answers can move these numbers a lot.</p>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <pre>(:Brain)-[:STANCE {value, quote}]->(:Claim)-[:MENTIONS]->(:Concept)-[:SAME_AS]->(:WikiEntity)
+(:Brain)-[:SAID]->(:Utterance)-[:SUPPORTS]->(:Claim)          vector index: claim_embedding (384-d)
+(:Response)-[:BY]->(:Brain), -[:TO]->(:Idea), -[:CITES]->(:Claim)
+(:Idea)-[:SCANNED_AS]->(:Scan)-[:HAS_MOMENT]->(:Moment)-[:ABOUT]->(:Claim)<-[:PREDICTS]-(:Brain)
+(:Moment)-[:ACTIVATES {z}]->(:Network)</pre>
+    <ul>
+      <li><b>Relate</b>: embedded, single-file graph store, opened in-process by the Next.js server. Vector search with <code>SEARCH … VECTOR INDEX … SCORE AS</code>; Cypher <code>MERGE</code>, <code>UNWIND</code>, <code>CALL {}</code>, <code>COUNT {}</code>, <code>EXISTS {}</code>. Also exposed read-only over MCP.</li>
+      <li><b>GraphRAG</b>: each brain answers only from claims it holds a stance on, with its quotes, concept profile and style.</li>
+      <li><b>Groq</b> <code>gpt-oss-120b</code>, which falls back to <code>gpt-oss-20b</code> when the free quota runs out. Local MiniLM embeddings, Wikidata and Wikipedia.</li>
+      <li><b>TRIBE v2</b> on a Colab T4, grouped into 7 networks with the Destrieux atlas, then joined to the persona predictions in the graph.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="note">
+      <b>Honest scope.</b> Brains are models of the words they were given, not real people or a market. TRIBE v2 predicts an average subject's fMRI-like response. The 7-network grouping is ours, and values are relative to each text's own average.
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">BrainPrint · built for the Relate by Neo4j Hackathon (Context, connected) · <a href="https://github.com/shubham123sing/brainprint">source on GitHub</a> · MIT</div>
+</footer>
+</body>
+</html>

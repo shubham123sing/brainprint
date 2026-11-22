@@ -1,0 +1,28 @@
+{
+  "_about": "Under-2-minute cut for the hackathon (same recordings as script.json, shorter narration, faster waiting). Spans are [start, end, speed] in seconds of the raw recording.",
+  "output": "brainprint_demo_2min.mp4",
+  "scenes": [
+    { "id": "title", "card": "title", "min": 4.5,
+      "say": "What would different people say about your idea? This is BrainPrint." },
+    { "id": "build", "rec": "build", "label": "Build a brain by talking",
+      "spans": [[0, 15, 5], [15, 29, 5], [29, 35, 1.5], [35, 43.6, 8], [43.6, 49.6, 3], [49.6, 65.2, 3]],
+      "say": "Build a brain just by talking as that person. Each message becomes beliefs, and every belief keeps the exact words behind it. The brain also learns how the person talks, and what they care about." },
+    { "id": "quiz", "rec": "quiz", "label": "Test every brain",
+      "spans": [[0, 9, 4], [9, 15.9, 3], [15.9, 24.4, 1.4]],
+      "say": "Brains are tested, not trusted. The brain locks in its prediction before I answer. It predicted agree, and it was right." },
+    { "id": "live", "rec": "live", "label": "Ask the panel",
+      "spans": [[0, 17.3, 6], [17.3, 31.9, 4], [31.9, 73, 2.6]],
+      "say": "Then ask every brain at once. Each one answers in its own voice, from its own beliefs. The student wants a discount and no data sold. The CFO wants hard ROI. The synthesis shows where they agree, where they clash, and a joint solution." },
+    { "id": "matrix", "rec": "matrix", "label": "Pitch testing",
+      "spans": [[0, 4.3, 3], [4.3, 18.2, 1.4]],
+      "say": "Test a pitch point by point. The jargon puts the investor and the CFO off, while the plain line lands with almost everyone." },
+    { "id": "brainwave", "rec": "brainwave", "label": "Average brain response (TRIBE v2)",
+      "spans": [[0, 4.3, 3], [4.3, 15.8, 1.5], [15.8, 27.4, 1.2]],
+      "say": "Meta's TRIBE v2 adds how an average brain responds, second by second. The line about two hundred freelancers saving four hours lifts attention and language, and every persona agrees. The funding line puts off two brains." },
+    { "id": "knowledge", "rec": "knowledge", "label": "One Relate graph",
+      "spans": [[0, 4, 3], [4, 13.6, 3], [13.6, 18.5, 0.9]],
+      "say": "Brains, beliefs, answers and brain scans all live in one Relate file, queried with Cypher and vector search." },
+    { "id": "outro", "card": "outro", "min": 5.5,
+      "say": "BrainPrint. Build them, test them, and ask them all at once." }
+  ]
+}

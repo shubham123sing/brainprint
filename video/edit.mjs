@@ -1,4 +1,6 @@
-// Edits the recorded scenes into out/brainprint_demo.mp4 (1920x1080, 30 fps, H.264 + AAC).
+// Edits the recorded scenes into one video (1920x1080, 30 fps, H.264 + AAC).
+//   node edit.mjs [script.json]   -> the file named by the script's "output" (default out/brainprint_demo.mp4)
+// A scene may override its edit spans ("spans") and a card its minimum length ("min").
 //   1. title/outro cards are rendered from HTML with Playwright
 //   2. each recorded scene is rebuilt from its screencast frames, its waiting parts sped up (SPANS below)
 //   3. each scene gets its narration, padded so the picture never ends before the voice, with short fades
@@ -10,10 +12,14 @@ import path from "node:path";
 import ffmpegPath from "ffmpeg-static";
 
 const OUT = path.resolve("out");
-const TMP = path.join(OUT, "edit");
+const SCRIPT = process.argv[2] ?? "script.json";
+const NAME = path.basename(SCRIPT, ".json");
+const TMP = path.join(OUT, "edit", NAME);
 fs.mkdirSync(TMP, { recursive: true });
-const script = JSON.parse(fs.readFileSync("script.json", "utf8"));
-const voice = JSON.parse(fs.readFileSync(path.join(OUT, "voice", "durations.json"), "utf8"));
+const script = JSON.parse(fs.readFileSync(SCRIPT, "utf8"));
+const OUTPUT = script.output ?? "brainprint_demo.mp4";
+const VOICE_DIR = path.join(OUT, "voice", NAME === "script" ? "" : NAME);
+const voice = JSON.parse(fs.readFileSync(path.join(VOICE_DIR, "durations.json"), "utf8"));
 const ff = (args) => execFileSync(ffmpegPath, ["-y", "-hide_banner", "-loglevel", "error", ...args], { stdio: "inherit" });
 
 const VOICE_DELAY = 0.45; // seconds of picture before the voice starts in each scene
@@ -53,7 +59,7 @@ async function renderCards() {
 }
 
 /** Raw frames -> constant-rate 30 fps 1080p video with the given spans, sped up. Returns its duration. */
-function buildRecorded(rec, out) {
+function buildRecorded(rec, out, spansOverride) {
   const dir = path.join(OUT, "scenes", rec);
   const { frames, end } = JSON.parse(fs.readFileSync(path.join(dir, "frames.json"), "utf8"));
   const lines = [];
@@ -65,7 +71,7 @@ function buildRecorded(rec, out) {
   lines.push(`file '${path.join(dir, frames[frames.length - 1].f).replace(/\\/g, "/")}'`);
   const list = path.join(TMP, `${rec}.txt`);
   fs.writeFileSync(list, lines.join("\n"));
-  const spans = SPANS[rec];
+  const spans = spansOverride ?? SPANS[rec];
   const parts = spans.map(([a, b, s], i) => `[v${i}]trim=start=${a}:end=${b},setpts=(PTS-STARTPTS)/${s}[p${i}]`);
   const filter = `[0:v]fps=60,scale=1920:1080:flags=lanczos,setsar=1,split=${spans.length}${spans.map((_, i) => `[v${i}]`).join("")};` +
     parts.join(";") + ";" + spans.map((_, i) => `[p${i}]`).join("") + `concat=n=${spans.length}:v=1:a=0,fps=30[out]`;
@@ -75,12 +81,12 @@ function buildRecorded(rec, out) {
 }
 
 /** Picture + voice -> one finished scene clip of length T with fades. */
-function finishScene(id, picture, picDur, isCard) {
-  const T = Math.max(isCard ? CARD_MIN[id] : picDur, voice[id] + VOICE_DELAY + TAIL);
+function finishScene(id, picture, picDur, isCard, min) {
+  const T = Math.max(isCard ? (min ?? CARD_MIN[id]) : picDur, voice[id] + VOICE_DELAY + TAIL);
   const out = path.join(TMP, `scene_${id}.mp4`);
   const vin = isCard ? ["-loop", "1", "-framerate", "30", "-t", String(T), "-i", picture] : ["-i", picture];
   const pad = isCard ? "" : `tpad=stop_mode=clone:stop_duration=${Math.max(0, T - picDur + 0.1).toFixed(2)},`;
-  ff([...vin, "-i", path.join(OUT, "voice", `${id}.wav`), "-filter_complex",
+  ff([...vin, "-i", path.join(VOICE_DIR, `${id}.wav`), "-filter_complex",
     `[0:v]${pad}trim=duration=${T.toFixed(3)},fade=in:st=0:d=0.3,fade=out:st=${(T - 0.3).toFixed(3)}:d=0.3,format=yuv420p[v];` +
     `[1:a]aresample=48000,adelay=${Math.round(VOICE_DELAY * 1000)}:all=1,apad,atrim=duration=${T.toFixed(3)},afade=out:st=${(T - 0.25).toFixed(3)}:d=0.25[a]`,
     "-map", "[v]", "-map", "[a]", "-r", "30", "-c:v", "libx264", "-crf", "16", "-preset", "medium", "-c:a", "aac", "-b:a", "192k", out]);
@@ -128,10 +134,10 @@ const timeline = [];
 let t = 0;
 for (const s of script.scenes) {
   let res;
-  if (s.card) res = finishScene(s.id, path.join(TMP, `${s.card}.png`), 0, true);
+  if (s.card) res = finishScene(s.id, path.join(TMP, `${s.card}.png`), 0, true, s.min);
   else {
     const pic = path.join(TMP, `pic_${s.id}.mp4`);
-    const dur = buildRecorded(s.rec, pic);
+    const dur = buildRecorded(s.rec, pic, s.spans);
     res = finishScene(s.id, pic, dur, false);
   }
   timeline.push({ s, start: t, file: res.out });
@@ -140,11 +146,11 @@ for (const s of script.scenes) {
 }
 fs.writeFileSync(path.join(TMP, "concat.txt"), timeline.map((x) => `file '${x.file.replace(/\\/g, "/")}'`).join("\n"));
 fs.writeFileSync(path.join(TMP, "subs.ass"), subtitles(timeline));
-fs.writeFileSync(path.join(OUT, "brainprint_demo.srt"), timeline.flatMap(({ s, start }, i) => [`${i + 1}`,
+fs.writeFileSync(path.join(OUT, OUTPUT.replace(/\.mp4$/, ".srt")), timeline.flatMap(({ s, start }, i) => [`${i + 1}`,
   `${ts(start + VOICE_DELAY).replace(".", ",")}0 --> ${ts(start + VOICE_DELAY + voice[s.id]).replace(".", ",")}0`, s.say, ""]).join("\n").replace(/^0:/gm, "00:").replace(/--> 0:/g, "--> 00:"));
 // burn subtitles; run from TMP so the subtitles path needs no Windows drive-letter escaping
 execFileSync(ffmpegPath, ["-y", "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", "concat.txt",
   "-vf", "subtitles=subs.ass", "-c:v", "libx264", "-crf", "18", "-preset", "medium",
   "-af", "loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000,aformat=channel_layouts=stereo", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart",
-  path.join(OUT, "brainprint_demo.mp4")], { cwd: TMP, stdio: "inherit" });
-console.log(`done: out/brainprint_demo.mp4, ${t.toFixed(1)}s`);
+  path.join(OUT, OUTPUT)], { cwd: TMP, stdio: "inherit" });
+console.log(`done: out/${OUTPUT}, ${t.toFixed(1)}s`);

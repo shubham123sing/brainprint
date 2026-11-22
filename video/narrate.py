@@ -1,6 +1,6 @@
 """Makes one WAV per scene from script.json with the local Piper voice, and prints each duration.
 
-    .venv/Scripts/python narrate.py
+    .venv/Scripts/python narrate.py [script.json]
 """
 import json
 import subprocess
@@ -10,10 +10,11 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 VOICE = HERE / "voices" / "en_US-ryan-high.onnx"
-OUT = HERE / "out" / "voice"
+SCRIPT = HERE / (sys.argv[1] if len(sys.argv) > 1 else "script.json")
+OUT = HERE / "out" / "voice" / ("" if SCRIPT.stem == "script" else SCRIPT.stem)
 OUT.mkdir(parents=True, exist_ok=True)
 
-script = json.loads((HERE / "script.json").read_text(encoding="utf-8"))
+script = json.loads(SCRIPT.read_text(encoding="utf-8"))
 durations = {}
 for s in script["scenes"]:
     wav = OUT / f"{s['id']}.wav"
