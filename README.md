@@ -14,7 +14,37 @@ Everything (brains, beliefs, quotes, styles, questions, responses, concepts, Wik
 
 ---
 
-## Quick start
+## Use case
+Before you launch an idea, ask a question, or write a pitch, you want to know how *different* people will react: the skeptical CFO, the budget student, the cautious investor. Real panels are slow and expensive, and a generic chatbot persona has no memory, no evidence and no measured accuracy.
+
+BrainPrint builds each persona from that person's own words and checks how well it predicts them. It then asks all the personas at once. The relationships are the product:
+- **brain → belief → exact quote:** every opinion can be traced back to the words that support it;
+- **beliefs shared across brains:** two brains that hold the same claim point to the same `Claim` node, so agreement and conflict are graph patterns, not text matching;
+- **claim → concept → Wikidata:** questions and brains meet through shared concepts and world knowledge;
+- **answer → cited beliefs → brain:** every panel answer shows which beliefs it used, so it can be checked;
+- **pitch sentence → average brain response (TRIBE v2) → persona predictions:** what a typical brain reacts to, joined with what each persona thinks of the same point.
+
+## How it uses Relate
+- **Mode:** single file (`graph/brainprint.rl`), embedded in the Next.js server through `@relate/relate`.
+- **Why this mode:**
+  - **No database server.** `npm run dev` is the whole setup, so judges and users get the full graph with one clone.
+  - **The data ships with the code.** The example brains, their checks, the stored panel answers, Wikidata links and TRIBE v2 results are all in the committed file, so the app is useful without an API key.
+  - **Portable.** One file to copy, back up or reset. The same file also opens in the Relate CLI's MCP server, so any MCP host can query it.
+  - **Persistent.** In-memory mode would lose every brain on restart. A directory store adds nothing for a single-process app of this size.
+  - **Trade-off we accepted:** only one process may write the file at a time (see [docs/RELATE_NOTES.md](docs/RELATE_NOTES.md)).
+- **What the graph models:**
+
+  | nodes | key relationships |
+  |---|---|
+  | `Brain`, `Utterance`, `Claim`, `Concept` | `(:Brain)-[:SAID]->(:Utterance)-[:SUPPORTS]->(:Claim)`, `(:Brain)-[:STANCE {value, note: quote}]->(:Claim)-[:MENTIONS]->(:Concept)` |
+  | `Check` | `(:Check)-[:OF]->(:Brain)`, `(:Check)-[:ON]->(:Claim)` (Quiz predictions and answers) |
+  | `Idea`, `Response`, `Synthesis` | `(:Idea)-[:HAS_CLAIM]->(:Claim)`, `(:Brain)-[:PREDICTS]->(:Claim)`, `(:Response)-[:BY]->(:Brain)`, `-[:TO]->(:Idea)`, `-[:CITES]->(:Claim)`, `(:Synthesis)-[:OF]->(:Idea)` |
+  | `WikiEntity`, `Source` | `(:Concept)-[:SAME_AS]->(:WikiEntity)-[:INSTANCE_OF\|SUBCLASS_OF]->(:WikiEntity)`, `(:Source)-[:EVIDENCE]->(:Claim)` |
+  | `Scan`, `Moment`, `Network` | `(:Idea)-[:SCANNED_AS]->(:Scan)-[:HAS_MOMENT]->(:Moment)-[:ABOUT]->(:Claim)`, `(:Moment)-[:ACTIVATES {z}]->(:Network)` |
+
+  A 384-d **vector index** `claim_embedding` on `Claim` finds the beliefs relevant to any question.
+
+## Setup and run
 Needs **Node 18+** only; the graph is already in the repo. Prebuilt Relate binaries ship for Windows x64, Linux x64/arm64 and macOS.
 ```bash
 git clone https://github.com/shubham123sing/brainprint && cd brainprint/web
@@ -24,6 +54,10 @@ npm run dev        # → http://localhost:3000  (Brain Panel · Brain Library)
 - **No key needed to look around:** the example brains, the stored panel answers and everything in the graph show without an API key.
 - **To talk to brains and ask new questions:** copy `web/.env.example` to `web/.env.local`, add a **free** `GROQ_API_KEY` (console.groq.com, no card needed), and restart. Without a key, brains answer graph-only: a plain summary of their closest beliefs instead of a voice.
 - **First run:** the app downloads a 23 MB sentence-embedding model (MiniLM, runs on the CPU).
+- **First result:** open http://localhost:3000, pick a stored question in the Brain Panel, and you see every brain's answer, the synthesis, and the graph view. Then open `/brains` to see each brain's beliefs, quotes and measured accuracy.
+
+## Where the data lives
+**[`graph/brainprint.rl`](graph/brainprint.rl)**: one Relate single-file store, committed to this repo. The app opens it on start (path set in [`web/lib/relate.ts`](web/lib/relate.ts)). TRIBE v2 result files are in [`brainwave/results/`](brainwave/results/) and are imported into the same graph.
 
 ## Why Relate
 A brain *is* a graph, and a panel *is* a query across graphs. Each thing the app does is one connected question:
