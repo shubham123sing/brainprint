@@ -1,0 +1,170 @@
+{
+  "_about": "Under-2-minute cut (Dec 2026): hook -> build -> sealed prediction -> Ledgerly v1 -> v2 flip -> TRIBE (short) -> panel -> measured numbers -> outro. Numbers from eval/results.md and graph/tour.cypher. Spans are [start, end, speed] in seconds of the raw recording.",
+  "output": "brainprint_demo_v3.mp4",
+  "scenes": [
+    {
+      "id": "hook",
+      "card": "hook",
+      "min": 4,
+      "html": "<h2>You pitched. The CFO said no.<br/><em>You could have known.</em></h2><p class=\"s\">BrainPrint · persona brains in one Relate graph</p>",
+      "say": "You pitch to a CFO and an investor, and they both say no. What if you could have asked them first?"
+    },
+    {
+      "id": "build",
+      "rec": "build",
+      "label": "Build a brain by talking",
+      "spans": [
+        [
+          0,
+          15,
+          7.25
+        ],
+        [
+          15,
+          29,
+          7.25
+        ],
+        [
+          29,
+          35,
+          2.17
+        ],
+        [
+          35,
+          43.6,
+          11.6
+        ],
+        [
+          43.6,
+          49.6,
+          4.35
+        ],
+        [
+          49.6,
+          65.2,
+          4.35
+        ]
+      ],
+      "say": "BrainPrint builds a brain of a person from their own words. Every belief keeps the exact quote behind it, and the brain learns how that person talks."
+    },
+    {
+      "id": "quiz",
+      "rec": "quiz",
+      "label": "Sealed prediction",
+      "spans": [
+        [
+          0,
+          9,
+          4
+        ],
+        [
+          9,
+          15.9,
+          3
+        ],
+        [
+          15.9,
+          24.4,
+          1.4
+        ]
+      ],
+      "say": "Before I answer, the brain locks in its prediction. It is stored in the graph first, so it cannot cheat. It predicted agree, and it was right."
+    },
+    {
+      "id": "matrix",
+      "rec": "matrix",
+      "label": "Pitch v1, point by point",
+      "spans": [
+        [
+          0,
+          4.3,
+          3
+        ],
+        [
+          4.3,
+          18.2,
+          1.4
+        ]
+      ],
+      "say": "Here is my first pitch, tested point by point. The jargon and the funding ask put off the investor and the CFO."
+    },
+    {
+      "id": "matrix2",
+      "rec": "matrix2",
+      "label": "Pitch v2: the flip",
+      "spans": [
+        [
+          0,
+          5.5,
+          4
+        ],
+        [
+          5.5,
+          8,
+          2
+        ],
+        [
+          8,
+          24.1,
+          1.2
+        ]
+      ],
+      "say": "Version two names one real result: two hundred freelancers saved four hours a month. That point lands with all four brains, and the student brain shows why. Concrete numbers convince it."
+    },
+    {
+      "id": "brainwave",
+      "rec": "brainwave",
+      "label": "Average brain (TRIBE v2)",
+      "spans": [
+        [
+          0,
+          4.3,
+          3
+        ],
+        [
+          4.3,
+          10,
+          1.2
+        ]
+      ],
+      "say": "Meta's TRIBE v2 adds how an average brain responds. That line lifts attention."
+    },
+    {
+      "id": "live",
+      "rec": "live",
+      "label": "Ask every brain at once",
+      "spans": [
+        [
+          0,
+          17.3,
+          12
+        ],
+        [
+          17.3,
+          31.9,
+          7.5
+        ],
+        [
+          31.9,
+          73,
+          4.8
+        ]
+      ],
+      "say": "Then ask every brain at once. Each answers in its own voice, citing its own beliefs, and a synthesis finds a solution for everyone."
+    },
+    {
+      "id": "numbers",
+      "card": "numbers",
+      "min": 6,
+      "html": "<h2>Measured, <em>not claimed</em></h2><table><tr><th class=\"l\">brain</th><th>predicts held-out answers</th><th>always-guess baseline</th></tr><tr><td class=\"l\">Skeptical CFO</td><td class=\"n\">97%</td><td>73%</td></tr><tr><td class=\"l\">Cautious investor</td><td class=\"n\">67%</td><td>61%</td></tr><tr><td class=\"l\">Busy freelancer</td><td class=\"n\">65%</td><td>64%</td></tr><tr><td class=\"l\">Budget student</td><td class=\"n\">52%</td><td>33%</td></tr></table><div class=\"row\"><span><b>28 / 28</b> citations backed</span><span><b>15</b> tests · CI green</span><span>3 seeds · 4-fold CV</span></div>",
+      "say": "Measured, not claimed. Every brain beats always guessing its most common answer, and all twenty-eight citations are backed by that brain's own beliefs. Fifteen tests run in CI."
+    },
+    {
+      "id": "outro",
+      "card": "outro3",
+      "min": 5,
+      "html": "<h1>Brain<span>Print</span></h1><p>Ask the room before you ask the world.</p><p class=\"s\">One Relate graph · <code>npm run tour</code> · github.com/shubham123sing/brainprint<br/>Example brains are built from scripted answers, not real people.</p>",
+      "say": "Everything lives in one Relate graph. Clone it and run the tour. BrainPrint: ask the room before you ask the world."
+    }
+  ]
+}

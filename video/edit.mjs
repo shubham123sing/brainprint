@@ -41,7 +41,11 @@ const CARD_MIN = { title: 6, outro: 8.5 };
 const CARD_CSS = `body{margin:0;width:1920px;height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:center;
   background:radial-gradient(circle at 30% 20%,#2a2560 0,#111114 55%);color:#f2f2f5;font-family:'Segoe UI',Arial,sans-serif;text-align:center}
   h1{font-size:150px;margin:0;letter-spacing:-3px} h1 span{color:#8b83ff}
-  p{font-size:48px;margin:24px 0 0;color:#c9c8d6} .s{font-size:32px;color:#8e8da0;margin-top:70px}`;
+  p{font-size:48px;margin:24px 0 0;color:#c9c8d6} .s{font-size:32px;color:#8e8da0;margin-top:70px}
+  h2{font-size:84px;margin:0 0 10px;letter-spacing:-1px;max-width:1500px;line-height:1.15} h2 em{color:#8b83ff;font-style:normal}
+  table{border-collapse:collapse;font-size:40px;margin-top:40px} th{font-size:28px;color:#8e8da0;font-weight:600;padding:8px 34px}
+  td{padding:12px 34px;border-top:1px solid #33324a} td.n{font-weight:700;color:#7ee0a0} td.l{text-align:left}
+  .row{display:flex;gap:60px;margin-top:46px;font-size:38px;color:#c9c8d6} .row b{color:#f2f2f5}`;
 const CARDS = {
   title: `<h1>Brain<span>Print</span></h1><p>Ask many minds at once.</p><p class="s">Persona brains built by talking · one Relate graph</p>`,
   outro: `<h1>Brain<span>Print</span></h1><p>Build brains by talking. Test them. Ask them all at once.</p>
@@ -51,7 +55,9 @@ const CARDS = {
 async function renderCards() {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [id, html] of Object.entries(CARDS)) {
+  // a script may define its own cards: { "card": "<name>", "html": "..." }
+  const own = Object.fromEntries(script.scenes.filter((s) => s.card && s.html).map((s) => [s.card, s.html]));
+  for (const [id, html] of Object.entries({ ...CARDS, ...own })) {
     await page.setContent(`<html><head><style>${CARD_CSS}</style></head><body>${html}</body></html>`);
     await page.screenshot({ path: path.join(TMP, `${id}.png`) });
   }
@@ -82,7 +88,7 @@ function buildRecorded(rec, out, spansOverride) {
 
 /** Picture + voice -> one finished scene clip of length T with fades. */
 function finishScene(id, picture, picDur, isCard, min) {
-  const T = Math.max(isCard ? (min ?? CARD_MIN[id]) : picDur, voice[id] + VOICE_DELAY + TAIL);
+  const T = Math.max(isCard ? (min ?? CARD_MIN[id] ?? 4) : picDur, voice[id] + VOICE_DELAY + TAIL);
   const out = path.join(TMP, `scene_${id}.mp4`);
   const vin = isCard ? ["-loop", "1", "-framerate", "30", "-t", String(T), "-i", picture] : ["-i", picture];
   const pad = isCard ? "" : `tpad=stop_mode=clone:stop_duration=${Math.max(0, T - picDur + 0.1).toFixed(2)},`;

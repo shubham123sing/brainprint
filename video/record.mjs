@@ -1,7 +1,7 @@
 // Records the BrainPrint demo scenes from the running app (npm run dev in web/, port 3000).
 // Frames come from the Chrome DevTools screencast (sharp JPEGs with arrival times), not Playwright's low-bitrate video.
 //
-//   node record.mjs <scene> [<scene> ...]      scenes: home build quiz live earlier matrix knowledge
+//   node record.mjs <scene> [<scene> ...]      scenes: home build quiz live earlier matrix matrix2 knowledge brainwave
 //
 // Output per scene: out/scenes/<scene>/{00000.jpg..., frames.json, marks.json}
 // The quiz scene pauses for a human answer: it writes out/quiz_question.txt and waits for out/quiz_answer.txt (1 | 0 | -1).
@@ -213,6 +213,22 @@ const SCENES = {
     await show(page.locator("table.matrix"), 6000, "start");
     await click(page.locator("table.matrix td.cell").nth(1));
     await show(page.locator(".why"), 7000);
+  },
+
+  // The revised pitch: the point with a concrete result lands with every brain
+  async matrix2({ page, mark, click, show, idle }) {
+    await page.goto(BASE + "/"); await page.waitForSelector(".blist .pitch");
+    await click(page.locator(".blist .pitch", { hasText: "Ledgerly v2" }));
+    await idle(1500);
+    await click(page.getByRole("button", { name: "Point-by-point reactions" }));
+    mark("matrix_wait");
+    await page.waitForSelector("table.matrix", { timeout: 120000 }); mark("matrix_ready");
+    await show(page.locator("table.matrix"), 5000, "start");
+    const row = page.locator("table.matrix tr", { hasText: "two hundred" });
+    await show(row, 1500);
+    mark("row");
+    await click(row.locator("td.cell").first());
+    await show(page.locator(".why"), 6000);
   },
 
   async knowledge({ page, mark, click, show, idle }) {
