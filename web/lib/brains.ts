@@ -9,7 +9,7 @@
 //      claim_embedding) and concept paths (target)-[:MENTIONS]->(concept)<-[:MENTIONS]-(answered)<-[:STANCE]-(brain);
 //   2. a free LLM (Groq / Ollama) reads that evidence and predicts agree / neutral / disagree, citing the answers it used.
 //   Without an LLM, a graph-only predictor (similarity vote + concept mean + base rate) is used.
-//   Measured (4-fold CV on the example brains): LLM 82% / 68% vs majority baseline 59% / 64%; graph-only ~= baseline.
+//   Measured accuracy (seeded 4-fold CV, held-out baselines, confidence intervals): see eval/results.md (npm run eval).
 // Self-test: the prediction for a training question is stored as a pending Check BEFORE the question is shown,
 // so every brain carries an honest, held-out accuracy.
 import "server-only";
@@ -18,6 +18,7 @@ import path from "node:path";
 import { checkpoint, connection, type Row } from "@/lib/relate";
 import { EMBED_DIMS, embed } from "@/lib/embed";
 import { activeProvider, chatComplete } from "@/lib/llm";
+import { majority, shuffle } from "@/lib/stats";
 
 const q = (cypher: string, params: Record<string, unknown> = {}) => connection().query(cypher, params as never).rows as Row[];
 const DATA = path.join(process.cwd(), "data");
@@ -190,31 +191,9 @@ async function llmJson(system: string, user: string) {
  */
 export async function predictMany(brain: string, claims: string[], exclude: string[] = []): Promise<Prediction[]> {
   if (!claims.length) return [];
-  const b = q(`MATCH (b:Brain {id: $brain}) RETURN b.name AS name, b.description AS d`, { brain })[0];
-  const hidden = [...exclude, ...claims];
-  const answers = q(
-    `MATCH (:Brain {id: $brain})-[s:STANCE]->(k:Claim) WHERE NOT k.id IN $hidden
-     RETURN k.id AS id, k.text AS text, s.value AS v, s.note AS note`, { brain, hidden });
-  if (!answers.length) return claims.map((c) => graphPredict(brain, c, exclude));
-  const graph = claims.map((c) => ({ claim: c, ...retrieve(brain, c, hidden) }));
-  const texts = new Map(q(`MATCH (k:Claim) WHERE k.id IN $ids RETURN k.id AS id, k.text AS t`, { ids: claims }).map((r) => [String(r.id), String(r.t)]));
-  const lab = (v: unknown) => STANCE_LABEL[String(v)];
-  // The graph decides WHICH answers the model sees and in what order: answers retrieved for the targets (vector index +
-  // concept paths) first, then the rest, capped at 60. We deliberately do NOT attach per-target "similar answer -> stance"
-  // hints: measured by cross-validation, those hints anchor the model on similar-sounding statements that often carry the
-  // opposite stance (CV dropped from 68-82% to 41-50%).
-  const rank = new Map<string, number>();
-  graph.forEach((x) => x.ev.forEach((e, i) => rank.set(e.claim, Math.min(rank.get(e.claim) ?? 99, i))));
-  const ordered = [...answers].sort((a, c) => (rank.get(String(a.id)) ?? 99) - (rank.get(String(c.id)) ?? 99)).slice(0, 60);
-  // Short keys (A1.., T1..) instead of long graph ids: models copy them reliably; we map them back to graph ids.
-  const aKey = new Map(ordered.map((a, i) => [`A${i + 1}`, String(a.id)]));
-  const prompt =
-    `BRAIN: ${b?.name ?? brain}. Description from its trainer: ${b?.description || "(none)"}\n` +
-    `ANSWERS (${ordered.length}${answers.length > ordered.length ? ` most relevant of ${answers.length}` : ""}):\n` +
-    ordered.map((a, i) => `- [A${i + 1}] "${a.text}" -> ${lab(a.v)}${a.note ? ` (note: ${a.note})` : ""}`).join("\n") +
-    `\n\nPREDICT:\n` +
-    graph.map((x, i) => `- [T${i + 1}] "${texts.get(x.claim)}"`).join("\n");
-
+  const built = buildPredictionPrompt(brain, claims, exclude);
+  if (!built) return claims.map((c) => graphPredict(brain, c, exclude));
+  const { prompt, graph, aKey } = built;
   const res = await llmJson(PERSONA_SYSTEM, prompt);
   const preds = (res?.json?.predictions ?? []) as { claim: string; stance: string; confidence: number; because?: string[] }[];
   const key = (s: unknown) => String(s ?? "").replace(/[\[\]\s]/g, "").toUpperCase();
@@ -233,6 +212,40 @@ export async function predictMany(brain: string, claims: string[], exclude: stri
       because: (p.because ?? []).map((k) => aKey.get(key(k))).filter((id): id is string => Boolean(id)).slice(0, 3), // only real answers count
     };
   });
+}
+
+/**
+ * The exact prompt the LLM sees for a prediction (exported so tests can check what is and is not in it).
+ * Returns null when the brain has no visible answers. `exclude` and the targets themselves are hidden.
+ */
+export function buildPredictionPrompt(brain: string, claims: string[], exclude: string[] = []) {
+  const b = q(`MATCH (b:Brain {id: $brain}) RETURN b.name AS name`, { brain })[0];
+  // The trainer's description ("skeptical of hype, wants evidence…") is deliberately NOT given to the predictor: it can
+  // encode the very stances being tested. Predictions come from the brain's answers only (a test pins this).
+  const hidden = [...exclude, ...claims];
+  const answers = q(
+    `MATCH (:Brain {id: $brain})-[s:STANCE]->(k:Claim) WHERE NOT k.id IN $hidden
+     RETURN k.id AS id, k.text AS text, s.value AS v, s.note AS note`, { brain, hidden });
+  if (!answers.length) return null;
+  const graph = claims.map((c) => ({ claim: c, ...retrieve(brain, c, hidden) }));
+  const texts = new Map(q(`MATCH (k:Claim) WHERE k.id IN $ids RETURN k.id AS id, k.text AS t`, { ids: claims }).map((r) => [String(r.id), String(r.t)]));
+  const lab = (v: unknown) => STANCE_LABEL[String(v)];
+  // The graph decides WHICH answers the model sees and in what order: answers retrieved for the targets (vector index +
+  // concept paths) first, then the rest, capped at 60. We deliberately do NOT attach per-target "similar answer -> stance"
+  // hints: measured by cross-validation, those hints anchor the model on similar-sounding statements that often carry the
+  // opposite stance (CV dropped from 68-82% to 41-50%).
+  const rank = new Map<string, number>();
+  graph.forEach((x) => x.ev.forEach((e, i) => rank.set(e.claim, Math.min(rank.get(e.claim) ?? 99, i))));
+  const ordered = [...answers].sort((a, c) => (rank.get(String(a.id)) ?? 99) - (rank.get(String(c.id)) ?? 99)).slice(0, 60);
+  // Short keys (A1.., T1..) instead of long graph ids: models copy them reliably; we map them back to graph ids.
+  const aKey = new Map(ordered.map((a, i) => [`A${i + 1}`, String(a.id)]));
+  const prompt =
+    `BRAIN: ${b?.name ?? brain}\n` +
+    `ANSWERS (${ordered.length}${answers.length > ordered.length ? ` most relevant of ${answers.length}` : ""}):\n` +
+    ordered.map((a, i) => `- [A${i + 1}] "${a.text}" -> ${lab(a.v)}${a.note ? ` (note: ${a.note})` : ""}`).join("\n") +
+    `\n\nPREDICT:\n` +
+    graph.map((x, i) => `- [T${i + 1}] "${texts.get(x.claim)}"`).join("\n");
+  return { prompt, graph, aKey };
 }
 
 export async function predict(brain: string, claim: string): Promise<Prediction> {
@@ -369,32 +382,46 @@ export function brainStats(brain: string) {
   };
 }
 
+export type CvRow = { claim: string; actual: number; predicted: number | null; by: string; baseline: number; fold: number };
+
 /**
- * 4-fold cross-validation: hide a quarter of the brain's answers, predict them from the rest, repeat.
- * Stored on the Brain node (cv_accuracy, cv_n, cv_baseline = always-predict-the-most-common-answer).
+ * k-fold cross-validation (default 4): hide one fold of the brain's answers, predict it from the rest, repeat.
+ * - The split is a seeded Fisher-Yates shuffle, so a run can be repeated exactly (`seed`, default 1).
+ * - The baseline is honest: for each fold it predicts the most common answer of the TRAINING folds only.
+ * - Returns every prediction (`rows`) so scripts can compute confidence intervals and kappa.
+ * Stored on the Brain node (cv_accuracy, cv_n, cv_baseline, cv_seed) unless `store: false`.
  */
-export async function crossValidate(brain: string) {
-  const answers = q(`MATCH (:Brain {id: $brain})-[s:STANCE]->(k:Claim) RETURN k.id AS id, s.value AS v`, { brain })
+export async function crossValidate(brain: string, opts: { seed?: number; folds?: number; store?: boolean } = {}) {
+  const seed = opts.seed ?? 1, k = opts.folds ?? 4;
+  const answers = q(`MATCH (:Brain {id: $brain})-[s:STANCE]->(c:Claim) RETURN c.id AS id, s.value AS v ORDER BY c.id`, { brain })
     .map((a) => ({ id: String(a.id), v: Number(a.v) }));
   if (answers.length < 8) throw new Error("Need at least 8 answers before cross-validation is meaningful.");
-  const ids = answers.map((a) => a.id).sort(() => Math.random() - 0.5);
-  const folds = [0, 1, 2, 3].map((f) => ids.filter((_, i) => i % 4 === f));
-  let ok = 0, n = 0, by = "graph", llm = 0, llmOk = 0;
-  for (const fold of folds) {
-    for (const p of await predictMany(brain, fold, fold)) {
-      n++;
-      const hit = p.stance === answers.find((a) => a.id === p.claim)!.v;
-      if (hit) ok++;
-      if (p.by !== "graph") { by = p.by; llm++; if (hit) llmOk++; }
-    }
+  const truth = new Map(answers.map((a) => [a.id, a.v]));
+  const ids = shuffle(answers.map((a) => a.id), seed);
+  const folds = Array.from({ length: k }, (_, f) => ids.filter((_, i) => i % k === f));
+  const rows: CvRow[] = [];
+  for (const [f, fold] of folds.entries()) {
+    const base = majority(ids.filter((id) => !fold.includes(id)).map((id) => truth.get(id)!));
+    for (const p of await predictMany(brain, fold, fold))
+      rows.push({ claim: p.claim, actual: truth.get(p.claim)!, predicted: p.stance, by: p.by, baseline: base, fold: f });
   }
-  console.info(`[brains] CV ${brain}: ${ok}/${n} correct; ${llm} predictions by LLM (${llmOk} correct), ${n - llm} by graph fallback`);
-  const counts = [1, 0, -1].map((v) => answers.filter((a) => a.v === v).length);
-  const baseline = r3(Math.max(...counts) / answers.length);
-  q(`MATCH (b:Brain {id: $brain}) SET b.cv_accuracy = $acc, b.cv_n = $n, b.cv_baseline = $baseline, b.cv_by = $by, b.cv_at = $at`,
-    { brain, acc: r3(ok / n), n, baseline, by, at: now() });
-  checkpoint();
-  return { accuracy: r3(ok / n), n, baseline, by, llm_predictions: llm, graph_fallbacks: n - llm };
+  const n = rows.length;
+  const ok = rows.filter((r) => r.predicted === r.actual).length;
+  const baseOk = rows.filter((r) => r.baseline === r.actual).length;
+  const llmRows = rows.filter((r) => r.by !== "graph");
+  const by = llmRows[0]?.by ?? "graph";
+  console.info(`[brains] CV ${brain} (seed ${seed}): ${ok}/${n} correct, baseline ${baseOk}/${n}; ${llmRows.length} by LLM, ${n - llmRows.length} by graph`);
+  const result = {
+    accuracy: r3(ok / n), n, baseline: r3(baseOk / n), by, seed,
+    llm_predictions: llmRows.length, graph_fallbacks: n - llmRows.length, rows,
+  };
+  if (opts.store !== false) {
+    q(`MATCH (b:Brain {id: $brain}) SET b.cv_accuracy = $acc, b.cv_n = $n, b.cv_baseline = $baseline, b.cv_by = $by,
+         b.cv_seed = $seed, b.cv_at = $at`,
+      { brain, acc: result.accuracy, n, baseline: result.baseline, by, seed, at: now() });
+    checkpoint();
+  }
+  return result;
 }
 
 /** Delete a brain and everything that belongs only to it (stances, utterances, checks, responses). Claims stay: other brains may share them. */

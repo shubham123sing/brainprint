@@ -12,6 +12,34 @@ Everything (brains, beliefs, quotes, styles, questions, responses, concepts, Wik
 
 > ⚠️ **What a brain is, and is not:** a model of **the answers and words its trainer gave**, shown with its measured accuracy. It is not a real person, a customer survey, or a market forecast. The three example brains were built from scripted answers and messages, and are labelled as examples everywhere.
 
+[![ci](https://github.com/shubham123sing/brainprint/actions/workflows/ci.yml/badge.svg)](https://github.com/shubham123sing/brainprint/actions/workflows/ci.yml)
+
+## For judges: 60-second tour
+No API key is needed for any of this. Every command works on a temporary copy of `graph/brainprint.rl`, so the committed graph stays unchanged. Stop `npm run dev` first, because Relate allows one writer per file.
+```bash
+cd web && npm install
+npm run tour     # 6 multi-hop Cypher questions from graph/tour.cypher, with their real answers
+npm test         # 15 tests: citation audit, verbatim quotes, no leakage, seeded cross-validation
+npm run dev      # the app: http://localhost:3000
+```
+What the tour prints, from the committed graph:
+
+| question (in [graph/tour.cypher](graph/tour.cypher)) | answer |
+|---|---|
+| Q1 Is every panel citation backed by the citing brain's own belief? | 28 citations, **0 unbacked**. Talk-built brains back them with their own words too |
+| Q2 Which pitch sentence lights up an average brain (TRIBE v2), and whom does it put off? | "We are raising one million dollars." (default-mode z = 1.79) puts off the CFO and the investor |
+| Q3 Which brains share a belief, and where do they clash? | freelancer × investor share 10 beliefs and clash on 1: "I trust AI to handle my money-related paperwork." |
+| Q4 Which points of a pitch split the panel? | 4 points, e.g. automatic tax categories land with 3 brains and put off the CFO |
+| Q5 Shortest belief path between the CFO and the student? | 2 hops, through "I trust SaaS tools to deliver value." |
+| Q6 Does every belief learned by talking keep the person's exact words? | 11/11 (CFO) and 7/7 (student) |
+
+| judging criterion | where to look |
+|---|---|
+| Relate and connected context | [How it uses Relate](#how-it-uses-relate), [graph/tour.cypher](graph/tour.cypher), [Why Relate](#why-relate) |
+| Functionality | `npm test`, [CI](.github/workflows/ci.yml) on Ubuntu and Windows, the app itself |
+| Usefulness | [Use case](#use-case), [Results](#results-npm-run-eval-full-table-in-evalresultsmd): measured against majority and crowd baselines |
+| Documentation | [Setup and run](#setup-and-run), [docs/RELATE_NOTES.md](docs/RELATE_NOTES.md) |
+
 ---
 
 ## Use case
@@ -100,20 +128,27 @@ A brain *is* a graph, and a panel *is* a query across graphs. Each thing the app
   - **Follow-up questions:** the brain asks one about a topic it knows little about.
 - **Quiz mode:** the app picks the statement the brain has the least evidence about, from a 36-statement probe bank and the panel's questions.
   - **Held-out prediction:** the brain **commits to a prediction first**, stored as a pending `(:Check)`. Then you answer, and the reveal shows whether it was right and which earlier answers it used.
-  - **Cross-validation:** 4-fold, run from the brain's page, compares accuracy with the always-say-the-most-common-answer baseline.
+  - **Cross-validation:** seeded 4-fold, run from the brain's page or for every brain with `npm run eval`. It is compared with baselines that never see the held-out answers.
 
-**Measured accuracy of stance prediction** (4-fold cross-validation, 22 scripted answers per example brain):
+### Results (`npm run eval`, full table in [eval/results.md](eval/results.md))
+3 seeds of 4-fold cross-validation on the committed graph, LLM `openai/gpt-oss-120b` on Groq. Every prediction is in [eval/results.json](eval/results.json), so each number can be recomputed.
 
-| predictor | Cautious investor | Busy freelancer |
-|---|---|---|
-| majority baseline | 59% | 64% |
-| embedding similarity only (first attempt, dropped) | 32% | 36% |
-| GraphRAG + LLM **with** per-claim "similar answer → stance" hints | 50–68% | 41–50% |
-| **GraphRAG + LLM (final):** the graph picks the evidence, with no stance hints | **64–82%** over 3 runs | **64–68%** over 3 runs |
+| brain (built from) | n | LLM + graph retrieval | 95% CI | majority baseline | crowd baseline | graph only, no LLM |
+|---|---|---|---|---|---|---|
+| Skeptical CFO (11 Talk beliefs) | 11 | **97%** | 74–100% | 73% | 73% | 61% |
+| Cautious investor (22 scripted + 1 Quiz) | 23 | **67%** | 45–81% | 61% | 70% | 55% |
+| Busy freelancer (22 scripted) | 22 | **65%** | 43–80% | 64% | 68% | 56% |
+| Budget-conscious student (7 Talk + 14 Quiz) | 21 | **52%** | 32–72% | 33% | 48% | 29% |
 
-What we learned, measured rather than assumed:
-- Sentences that *sound* alike often carry *opposite* stances ("AI makes me interested" vs "AI is hype"). Similarity-only prediction is therefore worse than guessing, and similarity hints mislead the LLM too.
-- The final design beats the baseline for the investor brain and only ties it for the freelancer brain. With 22 answers the numbers are noisy, which is why **every brain shows its own measured accuracy**, including on its panel answers.
+- **Majority baseline:** always predict the most common answer of the *training* folds. **Crowd baseline:** predict what the *other* brains answered. The crowd is the harder one to beat: it asks whether a personal brain knows more than "what people in general say".
+- **Talk → Quiz transfer** (the product's main claim): learning only from the student's 7 Talk beliefs, the brain predicted **7 of 14** later Quiz answers (50%, CI 27–73%), against 36% majority and 57% crowd.
+- **Sealed predictions:** every Quiz prediction is stored in the graph *before* the question is shown. The student brain got 7 of 14 right.
+- **Honest reading:** only the CFO brain clearly beats both baselines, and with 11 answers even that is not statistically significant (McNemar p = 0.5). The investor and freelancer brains were built from scripted answers. The graph-only predictor (no LLM) is worse than the baseline: the LLM is what reads the evidence the graph retrieves.
+- **No leakage:** held-out answers are hidden from the prompt and from graph retrieval, and the trainer's description of a brain is never shown to the predictor. Tests pin all three ([web/test/graph.test.ts](web/test/graph.test.ts)).
+
+How the design got here (earlier, unseeded runs on the two scripted brains):
+- Similarity-only prediction scored 32–36%, worse than guessing: sentences that *sound* alike often carry *opposite* stances ("AI makes me interested" vs "AI is hype").
+- Giving the LLM per-claim "similar answer → stance" hints misled it too (41–68%), so the final design lets the graph choose *which* answers the LLM sees, with no stance hints.
 
 ## Brain Panel (`/`)
 - **Ask** a problem or paste an idea, then choose which brains sit on the panel.
@@ -171,6 +206,10 @@ The host can then query every brain read-only, for example "which brains distrus
 | path | what it holds |
 |---|---|
 | `graph/brainprint.rl` | The Relate store: brains, beliefs, quotes, questions, responses, concepts, Wikidata |
+| `graph/tour.cypher` | The judge tour: 6 multi-hop Cypher questions (`npm run tour`) |
+| `eval/` | [`results.md`](eval/results.md) and `results.json`: seeded cross-validation, baselines, every prediction (`npm run eval`) |
+| `web/test/`, `web/scripts/` | Key-free tests (`npm test`), and the eval and tour scripts. [`lib/stats.ts`](web/lib/stats.ts) holds the statistics |
+| `.github/workflows/ci.yml` | CI on Ubuntu and Windows: typecheck, tests, graph-only eval, tour, build |
 | `web/` | Next.js app: [`lib/talk.ts`](web/lib/talk.ts), [`lib/panel.ts`](web/lib/panel.ts), [`lib/brains.ts`](web/lib/brains.ts) (prediction, Quiz, cross-validation), [`lib/ideas.ts`](web/lib/ideas.ts), [`lib/knowledge.ts`](web/lib/knowledge.ts), [`lib/llm.ts`](web/lib/llm.ts) |
 | `web/data/` | Probe statements, the example brains' scripted answers, and example questions |
 | `docs/` | [`RELATE_NOTES.md`](docs/RELATE_NOTES.md) (verified Relate API and findings), [`DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md), [`mcp.example.json`](docs/mcp.example.json) |

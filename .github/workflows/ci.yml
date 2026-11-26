@@ -1,0 +1,41 @@
+# Key-free CI: no API key, no network calls to an LLM. Tests and the judge tour run on a temporary copy of
+# graph/brainprint.rl, so the committed graph is never changed. The tour output is posted to the run summary.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      LLM_PROVIDER: none
+      NEXT_TELEMETRY_DISABLED: "1"
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Graph-only evaluation (no LLM)
+        run: npm run eval -- --graph-only --seeds 1 --out ci-eval
+      - name: Judge tour
+        shell: bash
+        run: |
+          npm run --silent tour -- --markdown > tour.md
+          { echo "### Judge tour on ${{ matrix.os }}"; cat tour.md; echo; echo "### Graph-only evaluation"; cat ../ci-eval/results.md; } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm run build

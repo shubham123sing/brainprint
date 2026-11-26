@@ -10,14 +10,16 @@ BrainPrint started as a pitch timeline built on Meta's TRIBE v2 brain-response m
 
 ## What it does
 - **Build a brain by talking.** You chat as the person. Each message becomes beliefs, and every belief keeps the **exact words** that support it. If the model can't quote it, the belief is dropped. The brain also learns how the person talks (tone, vocabulary, signature phrases).
-- **Test it before you trust it.** In Quiz mode the brain **locks in a prediction before you answer**, so accuracy is measured honestly. Cross-validation compares every brain with a majority-answer baseline:
+- **Test it before you trust it.** In Quiz mode the brain **locks in a prediction before you answer**, so accuracy is measured honestly. `npm run eval` runs seeded cross-validation (3 seeds × 4 folds) against two baselines that never see the held-out answers: the training majority and the "crowd" (what the other brains said):
 
-| brain | cross-validation | baseline | answers |
-|---|---|---|---|
-| Skeptical CFO | 100% | 73% | 11 |
-| Cautious investor | 64% | 59% | 22 |
-| Budget-conscious student | 57% | 48% | 21 |
-| Busy freelancer | 64% | 64% | 22 |
+| brain | cross-validation | 95% CI | majority | crowd | answers |
+|---|---|---|---|---|---|
+| Skeptical CFO | 97% | 74–100% | 73% | 73% | 11 |
+| Cautious investor | 67% | 45–81% | 61% | 70% | 23 |
+| Busy freelancer | 65% | 43–80% | 64% | 68% | 22 |
+| Budget-conscious student | 52% | 32–72% | 33% | 48% | 21 |
+
+  Samples are small, so the intervals are wide, and we say so. All predictions are committed in `eval/results.json`, and 15 key-free tests (no leakage, verbatim quotes, citation audit) run in CI.
 
 - **Ask the panel.** One question goes to every brain. Each answers **in its own voice**, lists concerns and what it would do, and shows the beliefs it relied on. A synthesis then shows **where they agree, where they clash, and a joint solution**.
 - **Test a pitch point by point.** A matrix predicts whether each sentence of a pitch lands with each brain. Click a cell to see why, and teach the brain if it's wrong.
