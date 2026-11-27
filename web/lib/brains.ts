@@ -438,7 +438,7 @@ export type CvRow = { claim: string; actual: number; predicted: number | null; b
  * - Returns every prediction (`rows`) so scripts can compute confidence intervals and kappa.
  * Stored on the Brain node (cv_accuracy, cv_n, cv_baseline, cv_seed) unless `store: false`.
  */
-export async function crossValidate(brain: string, opts: { seed?: number; folds?: number; store?: boolean; mode?: PredictMode } = {}) {
+export async function crossValidate(brain: string, opts: { seed?: number; folds?: number; store?: boolean; mode?: PredictMode; quiet?: boolean } = {}) {
   const seed = opts.seed ?? 1, k = opts.folds ?? 4;
   const answers = q(`MATCH (:Brain {id: $brain})-[s:STANCE]->(c:Claim) RETURN c.id AS id, s.value AS v ORDER BY c.id`, { brain })
     .map((a) => ({ id: String(a.id), v: Number(a.v) }));
@@ -457,7 +457,7 @@ export async function crossValidate(brain: string, opts: { seed?: number; folds?
   const baseOk = rows.filter((r) => r.baseline === r.actual).length;
   const llmRows = rows.filter((r) => r.by !== "graph");
   const by = llmRows[0]?.by ?? "graph";
-  console.info(`[brains] CV ${brain} (seed ${seed}): ${ok}/${n} correct, baseline ${baseOk}/${n}; ${llmRows.length} by LLM, ${n - llmRows.length} by graph`);
+  if (!opts.quiet) console.info(`[brains] CV ${brain} (seed ${seed}): ${ok}/${n} correct, baseline ${baseOk}/${n}; ${llmRows.length} by LLM, ${n - llmRows.length} by graph`);
   const result = {
     accuracy: r3(ok / n), n, baseline: r3(baseOk / n), by, seed,
     llm_predictions: llmRows.length, graph_fallbacks: n - llmRows.length, rows,

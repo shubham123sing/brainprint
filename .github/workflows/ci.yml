@@ -37,5 +37,5 @@ jobs:
         shell: bash
         run: |
           npm run --silent tour -- --markdown > tour.md
-          { echo "### Judge tour on ${{ matrix.os }}"; cat tour.md; echo; echo "### Graph-only evaluation"; cat ../ci-eval/results.md; } >> "$GITHUB_STEP_SUMMARY"
+          { echo "### Judge tour on ${{ matrix.os }}"; cat tour.md; echo; echo "### Graph-only evaluation"; cat ci-eval/results.md; } >> "$GITHUB_STEP_SUMMARY"
       - run: npm run build

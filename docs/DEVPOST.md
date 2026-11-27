@@ -88,7 +88,7 @@ relate, neo4j, cypher, graphrag, vector-search, next.js, react, typescript, node
 - Showcase: https://shubham123sing.github.io/brainprint/
 
 ## Image gallery (in this order)
-`video/out/gallery/`: 01_thumbnail.png, 02_panel_answers.png, 03_synthesis.png, 04_talk_beliefs.png, 05_quiz_reveal.png, 06_point_matrix.png, 07_tribe_heatmap.png, 08_tribe_sentences.png, 09_graph.png
+11 images from `video/out/gallery_v3/` (made by `node video/gallery.mjs`): 01_thumbnail, 02_measured, 05_pitch_v2_flip, 06_pitch_v1, 03_panel_answers, 04_synthesis, 07_talk_beliefs, 08_concepts_checks, 09_tribe_v2, 10_graph, 11_judge_tour (all .png, 1500×1000).
 
 ## Video demo link
 Upload `video/out/brainprint_demo_v3.mp4` (1:39) to YouTube as Public and paste the link; title and description are in docs/SUBMISSION_REFRESH.md. Devpost only embeds YouTube, Vimeo or Youku links.

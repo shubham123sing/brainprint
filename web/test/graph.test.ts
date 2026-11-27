@@ -92,8 +92,8 @@ test("no leakage: graph retrieval never returns an excluded claim", () => {
 test("cross-validation is reproducible with a seed, and its baseline uses training answers only", async () => {
   const cvAt = () => q(`MATCH (b:Brain {id: $b}) RETURN b.cv_at AS at`, { b: INVESTOR })[0].at ?? null;
   const before = cvAt();
-  const a = await brains.crossValidate(INVESTOR, { seed: 3, store: false });
-  const b = await brains.crossValidate(INVESTOR, { seed: 3, store: false });
+  const a = await brains.crossValidate(INVESTOR, { seed: 3, store: false, quiet: true });
+  const b = await brains.crossValidate(INVESTOR, { seed: 3, store: false, quiet: true });
   assert.deepEqual(a.rows, b.rows);
   assert.equal(a.n, 23);
   const { majority } = await import("@/lib/stats");

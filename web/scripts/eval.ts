@@ -31,7 +31,8 @@ const GRAPH_ONLY = flag("graph-only");
 const WEB = process.cwd();
 const ROOT = path.resolve(WEB, "..");
 const SRC = path.join(ROOT, "graph", "brainprint.rl");
-const OUT = path.resolve(ROOT, opt("out", "eval"));
+// --out is relative to where you run the command (web/); the default is <repo>/eval
+const OUT = args.includes("--out") ? path.resolve(process.cwd(), opt("out", "eval")) : path.join(ROOT, "eval");
 
 // .env.local (same file the app reads), unless graph-only
 if (!GRAPH_ONLY && fs.existsSync(path.join(WEB, ".env.local"))) {
@@ -161,14 +162,6 @@ function markdown(meta: Row, results: Row[]) {
   L.push(`- **CI** = Wilson 95% interval. **κ** = Cohen's kappa (0 = no better than chance agreement). **p** = exact McNemar test against the majority baseline (seed 1).`);
   L.push(`- **Majority baseline** = always predict the most common answer of the training folds. **Crowd baseline** = predict what the other brains answered.`);
   L.push(`- The trainer's description of a brain is not shown to the predictor; it sees only the brain's answers (pinned by a test).`, ``);
-  L.push(`## Cross-validation`, ``);
-  L.push(`| Brain | Built from | n | LLM + graph retrieval | Graph only (no LLM) | Majority | Crowd |`);
-  L.push(`|---|---|---|---|---|---|---|`);
-  for (const r of results) {
-    const src = Object.entries(r.sources as Record<string, number>).map(([s, c]) => `${c} ${s}`).join(", ");
-    if (r.skipped) { L.push(`| ${r.name} | ${src} | ${r.answers} | skipped: ${r.skipped} | | | |`); continue; }
-    L.push(`| ${r.name} | ${src} | ${r.n} | ${cell(r.llm as Arm | null)} | ${cell(r.graph as Arm)} | ${pct(Number(r.majority_baseline))} | ${pct(Number(r.crowd_baseline))} |`);
-  }
   const hy = results.filter((r) => r.hybrid && r.llm);
   if (hy.length) {
     type A = { accuracy_mean: number; accuracy_min: number; accuracy_max: number; ci95: number[]; kappa: number };
@@ -193,6 +186,14 @@ function markdown(meta: Row, results: Row[]) {
       L.push(``, `Talk → Quiz with the hybrid (${r.name}): **${t.correct}/${t.n}** (CI ${pct(t.ci95[0])}–${pct(t.ci95[1])}).`);
     }
   }
+  L.push(``, `## Detail: evidence-only (first design) and graph-only cross-validation`, ``, `Graph only = no LLM: a similarity vote over the brain's retrieved answers. It is what runs with no API key, and it is weaker than the majority baseline for some brains; the LLM is what reads the evidence the graph retrieves.`, ``);
+  L.push(`| Brain | Built from | n | LLM + graph retrieval | Graph only (no LLM) | Majority | Crowd |`);
+  L.push(`|---|---|---|---|---|---|---|`);
+  for (const r of results) {
+    const src = Object.entries(r.sources as Record<string, number>).map(([s, c]) => `${c} ${s}`).join(", ");
+    if (r.skipped) { L.push(`| ${r.name} | ${src} | ${r.answers} | skipped: ${r.skipped} | | | |`); continue; }
+    L.push(`| ${r.name} | ${src} | ${r.n} | ${cell(r.llm as Arm | null)} | ${cell(r.graph as Arm)} | ${pct(Number(r.majority_baseline))} | ${pct(Number(r.crowd_baseline))} |`);
+  }
   const no = results.filter((r) => r.name_only && r.llm && !r.hybrid);
   if (no.length) {
     L.push(``, `## Does the graph add anything? Graph vs role name only`, ``,
@@ -210,7 +211,7 @@ function markdown(meta: Row, results: Row[]) {
   }
   const tq = results.filter((r) => r.talk_to_quiz);
   if (tq.length) {
-    L.push(``, `## Talk → Quiz transfer`, ``, `Learn only from what the person said in Talk mode, then predict every answer they later gave in Quiz mode.`, ``);
+    L.push(``, `## Talk → Quiz transfer (evidence-only)`, ``, `Learn only from what the person said in Talk mode, then predict every answer they later gave in Quiz mode.`, ``);
     L.push(`| Brain | Talk beliefs | Quiz answers predicted | Accuracy | CI | Majority | Crowd | By |`, `|---|---|---|---|---|---|---|---|`);
     for (const r of tq) {
       const t = r.talk_to_quiz as Record<string, number | number[] | string>;
@@ -229,7 +230,7 @@ function markdown(meta: Row, results: Row[]) {
   }
   L.push(``, `## Honest reading`, ``);
   L.push(`- Samples are small (11–23 answers per brain), so the intervals are wide: a difference of 10 points is not significant here.`);
-  L.push(`- The investor and freelancer brains were built from answers scripted by the authors, not from real people.`);
+  L.push(`- The investor and freelancer brains were built from answers scripted by the authors, not from real people, and a role name alone predicts them about as well as the hybrid. Real people are the real test.`);
   L.push(`- Per-claim predictions are in \`results.json\`, so every number above can be recomputed.`, ``);
   return L.join("\n");
 }

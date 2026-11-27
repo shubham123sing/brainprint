@@ -73,7 +73,7 @@ BrainPrint builds each persona from that person's own words and checks how well 
   A 384-d **vector index** `claim_embedding` on `Claim` finds the beliefs relevant to any question.
 
 ## Setup and run
-Needs **Node 18+** only; the graph is already in the repo. Prebuilt Relate binaries ship for Windows x64, Linux x64/arm64 and macOS.
+Needs **Node 18.18+** only (CI uses Node 22); the graph is already in the repo. Prebuilt Relate binaries ship for Windows x64, Linux x64/arm64 and macOS.
 ```bash
 git clone https://github.com/shubham123sing/brainprint && cd brainprint/web
 npm install
@@ -98,8 +98,7 @@ A brain *is* a graph, and a panel *is* a query across graphs. Each thing the app
 | **Synthesise the panel** | `(:Response)-[:BY]->(:Brain)`, `-[:TO]->(:Idea)`, `-[:CITES]->(:Claim)`, compared across brains. |
 | **Connect to world knowledge** | `(:Concept)-[:SAME_AS]->(:WikiEntity)-[:INSTANCE_OF\|SUBCLASS_OF]->(:WikiEntity)`. Brains and questions meet through shared Wikidata classes. |
 
-**How BrainPrint uses Relate**
-- **Mode:** a **single-file** store, embedded in the Next.js server through `@relate/relate` (Node), with no database server. The file is portable and committed. Optionally, the Relate CLI's **MCP server** exposes the same file to any MCP host ([below](#using-the-graph-from-any-mcp-host)).
+**Relate features used** (mode and reasons: [How it uses Relate](#how-it-uses-relate); the Relate CLI's **MCP server** can open the same file, [below](#using-the-graph-from-any-mcp-host))
 - **Cypher features:** `MERGE` / `UNWIND` batch upserts, `CALL (x) { … }` per-row subqueries, `COUNT { … }`, `EXISTS { … }`, `UNION ALL` graph projections, uniqueness constraints, and explicit transactions (`begin` / `commit` / `rollback`) with `checkpoint()`.
 - **Vector search:** a **vector index** `claim_embedding` (384-d), queried with the `SEARCH … VECTOR INDEX … SCORE AS` clause, both per row and from a parameter vector.
 - **What we learned about Relate 1.2:** documented, with workarounds, in [docs/RELATE_NOTES.md](docs/RELATE_NOTES.md):
@@ -224,7 +223,9 @@ The host can then query every brain read-only, for example "which brains distrus
 - **Privacy:** with Groq, your messages and the brains' beliefs are sent to Groq's API. Use a local Ollama model (`LLM_PROVIDER=ollama`) for private material.
 - **Wikidata links and web checks** are model-assisted and can be wrong. Check the QID and source links.
 - **One process at a time** may hold `graph/brainprint.rl` for writing (the web server, a script, or an MCP server). This is a Relate single-file constraint ([details](docs/RELATE_NOTES.md)).
-- **Platforms:** built and tested on Windows 11 with Node 24. Other platforms rely on Relate's published binaries and haven't been tested by us.
+- **Platforms:** built on Windows 11 with Node 24. CI runs the tests, the graph-only eval, the judge tour and the build on Ubuntu and Windows with Node 22 on every push. macOS relies on Relate's published binaries and hasn't been tested by us.
+- **Without an API key** the app runs graph-only: Quiz and the point-by-point matrix use a similarity vote over the brain's answers (weaker than the majority baseline for some brains, see [eval/results.md](eval/results.md)), and new panel answers are plain lists of the brain's closest beliefs, not a voice. The stored answers and everything in the judge tour work without a key.
+- **npm audit** reports a moderate and a high advisory in `postcss` through `next`. The fix is Next 16, a breaking upgrade we did not make before the deadline. It affects CSS processing at build time, not the graph or the API.
 
 ## License
 MIT for this project's code. Relate, the MiniLM model, and Llama-based Groq models keep their own licenses.

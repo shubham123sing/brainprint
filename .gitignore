@@ -35,3 +35,7 @@ Thumbs.db
 
 # Local IDE / agent config
 .claude/
+
+# Local eval runs written with --out (the committed results are in eval/)
+web/ci-eval/
+web/judge-eval/

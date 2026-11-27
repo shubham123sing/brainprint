@@ -1,4 +1,4 @@
-# BrainPrint: 90-second demo video script
+# BrainPrint: demo video script (the current 1:39 cut is video/script_v3.json; see docs/SUBMISSION_REFRESH.md)
 
 **Setup before recording**
 - `cd web && npm run dev` with a Groq key in `web/.env.local`. Groq's free plan has a daily token quota, so do a test run a day before. The app falls back to `gpt-oss-20b` automatically, but test anyway.

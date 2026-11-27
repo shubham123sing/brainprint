@@ -39,7 +39,7 @@ function accuracyText(s: Stats) {
 }
 
 export default function PanelPage() {
-  const [brains, setBrains] = useState<BrainRow[]>([]);
+  const [brains, setBrains] = useState<BrainRow[] | null>(null); // null until the first load, so "No brains yet" never flashes
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [asks, setAsks] = useState<Ask[]>([]);
   const [kind, setKind] = useState<"problem" | "idea">("problem");
@@ -148,7 +148,7 @@ export default function PanelPage() {
     finally { setBusy(null); }
   };
 
-  const nameOf = (id: string) => brains.find((b) => b.id === id)?.name ?? id;
+  const nameOf = (id: string) => (brains ?? []).find((b) => b.id === id)?.name ?? id;
   const running = pending.length > 0;
 
   return (
@@ -184,14 +184,15 @@ export default function PanelPage() {
           </div>
           <h4>Brains on the panel</h4>
           <div className="picklist">
-            {brains.map((b) => (
+            {(brains ?? []).map((b) => (
               <label key={b.id} className="pick">
                 <input type="checkbox" checked={picked.has(b.id)}
                   onChange={(e) => setPicked((p) => { const n = new Set(p); if (e.target.checked) n.add(b.id); else n.delete(b.id); return n; })} />
                 <span><b>{b.name}</b><span className="muted small"> · {accuracyText(b)}</span></span>
               </label>
             ))}
-            {brains.length === 0 && <p className="empty">No brains yet. Build one in the <a href="/brains">Brain Library</a>.</p>}
+            {brains === null && <p className="muted small">Loading brains…</p>}
+            {brains?.length === 0 && <p className="empty">No brains yet. Build one in the <a href="/brains">Brain Library</a>.</p>}
           </div>
           <button className="primary" disabled={!title.trim() || text.trim().length < 15 || !!busy || running} onClick={ask}>
             Ask {picked.size} brain{picked.size === 1 ? "" : "s"}
