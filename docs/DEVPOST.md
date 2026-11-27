@@ -17,17 +17,19 @@ BrainPrint started as a pitch timeline built on Meta's TRIBE v2 brain-response m
 - **World knowledge.** Concepts are linked to Wikidata and Wikipedia, so questions connect to each other through shared classes.
 
 ## Measured, not claimed
-`npm run eval` runs seeded cross-validation (3 seeds × 4 folds) against two baselines that never see the held-out answers: the training **majority** answer and the **crowd** (what the other brains said).
+`npm run eval` runs seeded cross-validation (3 seeds × 4 folds). The app's **hybrid** predictor starts from the brain's role ("Skeptical CFO") and lets the brain's own answers, retrieved from the graph, override it. It is compared with baselines that never see the held-out answers: the training **majority**, the **crowd** (what the other brains said), and the same LLM told only the **role name**.
 
-| brain | cross-validation | 95% CI | majority | crowd | answers |
-|---|---|---|---|---|---|
-| Skeptical CFO | **97%** | 74–100% | 73% | 73% | 11 |
-| Cautious investor | **67%** | 45–81% | 61% | 70% | 23 |
-| Busy freelancer | **65%** | 43–80% | 64% | 68% | 22 |
-| Budget-conscious student | **52%** | 32–72% | 33% | 48% | 21 |
+| brain | hybrid (app) | 95% CI | majority | crowd | evidence only | role name only | answers |
+|---|---|---|---|---|---|---|---|
+| Skeptical CFO | **91%** | 62–98% | 73% | 73% | 97% | 82% | 11 |
+| Cautious investor | **80%** | 58–90% | 61% | 70% | 67% | 83% | 23 |
+| Busy freelancer | **67%** | 47–84% | 64% | 68% | 65% | 82% | 22 |
+| Budget-conscious student | **59%** | 37–76% | 33% | 48% | 52% | 62% | 21 |
+| **all 77 answers** | **72%** | | 56% | 64% | 67% | 77% | 77 |
 
-- Every brain beats always guessing its most common answer. Only the CFO and the student beat the crowd, and the samples are small, so the intervals are wide. We publish all of it, with every prediction in `eval/results.json`.
-- **Citation audit:** all 28 panel citations are backed by the citing brain's own belief (0 unbacked).
+- Every brain beats always guessing its most common answer, and three of four beat the crowd. The hybrid beat our first, evidence-only design by 5 points.
+- **The honest part:** on these brains the role name alone does as well (77%). Our investor and freelancer brains were scripted from the stereotype, so a stereotype predicts them. A brain earns its keep only where a person differs from their stereotype, so the next step is brains of real people. We publish all of it, with every prediction in `eval/results.json`.
+- **Citation audit:** all 44 panel citations are backed by the citing brain's own belief (0 unbacked).
 - **15 key-free tests** (no leakage, verbatim quotes, citation audit, seeded cross-validation) run in CI on Ubuntu and Windows.
 
 ## For judges: try it in 60 seconds
@@ -55,19 +57,19 @@ npm run dev     # the app at http://localhost:3000
 ## Challenges we ran into
 - **One writer per file.** A Relate `.rl` store allows one writer, and the Node client has no `close()`. We keep a single handle per server process; tests, the eval and the tour each work on a temporary copy.
 - **Stance polarity.** At first every concept scored +1, because the model phrased beliefs in the person's own direction. We made it phrase every belief *favourably* and store the person's direction separately.
-- **Honest accuracy.** Our first numbers came from one unseeded run with a baseline computed on all answers. We rebuilt the evaluation: seeded splits, baselines from the training folds only, a crowd baseline, confidence intervals, and tests that pin "no leakage". Some numbers went down, and we kept them.
+- **Honest accuracy.** Our first numbers came from one unseeded run with a baseline computed on all answers. We rebuilt the evaluation: seeded splits, baselines from the training folds only, a crowd baseline, confidence intervals, and tests that pin "no leakage". Then we added the hardest baseline we could think of, the role name alone, and it matched us on our scripted brains. That pushed us to a hybrid predictor (+5 points) and to say plainly what still needs real people. Some numbers went down, and we kept them.
 - **Similar is not the same.** Sentences that sound alike often carry opposite stances ("AI makes me interested" vs "AI is hype"). Similarity-only prediction was worse than guessing, so the graph chooses *which* answers the LLM sees, without stance hints.
 - **TRIBE v2 access and setup.** It needs gated Llama 3.2 3B weights, and our first access request was denied. On Colab, installing TRIBE changed torch and broke torchaudio, so the notebook now reinstalls the matching version.
 - **Free tier limits.** Groq's daily and per-minute quotas are handled by an automatic model fallback and retries, and every answer shows which model wrote it.
 
 ## Accomplishments that we're proud of
 - Brains you can **build in a minute just by talking**, where every belief is backed by a verbatim quote.
-- **Sealed predictions** and a published evaluation that includes the brains that don't beat the crowd.
+- **Sealed predictions** and a published evaluation that includes a baseline that matches us.
 - One Relate graph joins **persona reactions, an average-brain response and world knowledge** for the same sentence, and anyone can query it with the tour.
 
 ## What we learned
 - Graphs make AI answers checkable: every answer cites beliefs, and every belief cites the person's own words.
-- A model of a mindset is only useful if you measure it against a baseline that is hard to beat. The crowd is that baseline.
+- A model of a mindset is only useful if you measure it against a baseline that is hard to beat. The crowd is one; a stereotype (the role name alone) is a harder one, and it showed us that scripted brains prove little.
 - An "average brain" and a "kind of person" answer different questions. Showing both side by side is more useful than either alone.
 
 ## What's next
@@ -89,4 +91,4 @@ relate, neo4j, cypher, graphrag, vector-search, next.js, react, typescript, node
 `video/out/gallery/`: 01_thumbnail.png, 02_panel_answers.png, 03_synthesis.png, 04_talk_beliefs.png, 05_quiz_reveal.png, 06_point_matrix.png, 07_tribe_heatmap.png, 08_tribe_sentences.png, 09_graph.png
 
 ## Video demo link
-Upload `video/out/brainprint_demo_v3.mp4` (1:35) to YouTube as Public and paste the link; title and description are in docs/SUBMISSION_REFRESH.md. Devpost only embeds YouTube, Vimeo or Youku links.
+Upload `video/out/brainprint_demo_v3.mp4` (1:39) to YouTube as Public and paste the link; title and description are in docs/SUBMISSION_REFRESH.md. Devpost only embeds YouTube, Vimeo or Youku links.

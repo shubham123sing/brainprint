@@ -77,13 +77,13 @@
       "spans": [
         [
           0,
-          4.3,
+          4.7,
           3
         ],
         [
-          4.3,
-          18.2,
-          1.4
+          4.7,
+          21.2,
+          1.5
         ]
       ],
       "say": "Here is my first pitch, tested point by point. The jargon and the funding ask put off the investor and the CFO."
@@ -95,17 +95,12 @@
       "spans": [
         [
           0,
-          5.5,
-          4
+          4.2,
+          3
         ],
         [
-          5.5,
-          8,
-          2
-        ],
-        [
-          8,
-          24.1,
+          4.2,
+          20.2,
           1.2
         ]
       ],
@@ -156,8 +151,8 @@
       "id": "numbers",
       "card": "numbers",
       "min": 6,
-      "html": "<h2>Measured, <em>not claimed</em></h2><table><tr><th class=\"l\">brain</th><th>predicts held-out answers</th><th>always-guess baseline</th></tr><tr><td class=\"l\">Skeptical CFO</td><td class=\"n\">97%</td><td>73%</td></tr><tr><td class=\"l\">Cautious investor</td><td class=\"n\">67%</td><td>61%</td></tr><tr><td class=\"l\">Busy freelancer</td><td class=\"n\">65%</td><td>64%</td></tr><tr><td class=\"l\">Budget student</td><td class=\"n\">52%</td><td>33%</td></tr></table><div class=\"row\"><span><b>28 / 28</b> citations backed</span><span><b>15</b> tests · CI green</span><span>3 seeds · 4-fold CV</span></div>",
-      "say": "Measured, not claimed. Every brain beats always guessing its most common answer, and all twenty-eight citations are backed by that brain's own beliefs. Fifteen tests run in CI."
+      "html": "<h2>Measured, <em>not claimed</em></h2><table><tr><th class=\"l\">brain</th><th>predicts held-out answers</th><th>always-guess baseline</th><th>role name only</th></tr><tr><td class=\"l\">Skeptical CFO</td><td class=\"n\">91%</td><td>73%</td><td>82%</td></tr><tr><td class=\"l\">Cautious investor</td><td class=\"n\">80%</td><td>61%</td><td>83%</td></tr><tr><td class=\"l\">Busy freelancer</td><td class=\"n\">67%</td><td>64%</td><td>82%</td></tr><tr><td class=\"l\">Budget student</td><td class=\"n\">59%</td><td>33%</td><td>62%</td></tr></table><div class=\"row\"><span><b>44 / 44</b> citations backed</span><span><b>15</b> tests · CI green</span><span>3 seeds · 4-fold CV</span></div>",
+      "say": "Measured, not claimed. Every brain beats always guessing its most common answer, and all forty-four citations are backed by that brain's own beliefs. Honestly, on these scripted brains a role name alone does as well, so real people are the next test."
     },
     {
       "id": "outro",

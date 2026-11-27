@@ -169,6 +169,45 @@ function markdown(meta: Row, results: Row[]) {
     if (r.skipped) { L.push(`| ${r.name} | ${src} | ${r.answers} | skipped: ${r.skipped} | | | |`); continue; }
     L.push(`| ${r.name} | ${src} | ${r.n} | ${cell(r.llm as Arm | null)} | ${cell(r.graph as Arm)} | ${pct(Number(r.majority_baseline))} | ${pct(Number(r.crowd_baseline))} |`);
   }
+  const hy = results.filter((r) => r.hybrid && r.llm);
+  if (hy.length) {
+    type A = { accuracy_mean: number; accuracy_min: number; accuracy_max: number; ci95: number[]; kappa: number };
+    const rng = (a: A) => `**${pct(a.accuracy_mean)}**${a.accuracy_min !== a.accuracy_max ? ` (${pct(a.accuracy_min)}–${pct(a.accuracy_max)})` : ""}`;
+    L.push(``, `## Three predictors on the same held-out answers`, ``,
+      `- **Evidence only:** the LLM reads only this brain's answers, retrieved and ordered by the graph (the original design).`,
+      `- **Role name only:** the LLM is told only the role ("Skeptical CFO"), no answers, no graph: a stereotype.`,
+      `- **Hybrid:** the LLM starts from the role and lets this brain's own answers override it where they differ.`, ``,
+      `Evidence and hybrid: mean over ${meta.seeds} seeds (range). Role name only: one run (it does not depend on the split).`, ``);
+    L.push(`| Brain | n | Evidence only | Role name only | Hybrid | Hybrid vs evidence (p) | Hybrid vs name (p) |`, `|---|---|---|---|---|---|---|`);
+    let tot = 0, e = 0, nmo = 0, h = 0;
+    for (const r of hy) {
+      const ev = r.llm as A, hh = r.hybrid as A & { mcnemar_p_vs_evidence: number; mcnemar_p_vs_name_only: number | null };
+      const nm = r.name_only as { accuracy: number; correct: number; n: number } | undefined;
+      const n = Number(r.n); tot += n; e += ev.accuracy_mean * n; h += hh.accuracy_mean * n; nmo += nm ? nm.correct : 0;
+      L.push(`| ${r.name} | ${n} | ${rng(ev)} | ${nm ? pct(nm.accuracy) : "–"} | ${rng(hh)} | ${hh.mcnemar_p_vs_evidence} | ${hh.mcnemar_p_vs_name_only ?? "–"} |`);
+    }
+    L.push(`| **All brains (weighted)** | ${tot} | **${pct(e / tot)}** | **${pct(nmo / tot)}** | **${pct(h / tot)}** | | |`);
+    const tqh = hy.filter((r) => r.hybrid_talk_to_quiz);
+    for (const r of tqh) {
+      const t = r.hybrid_talk_to_quiz as { correct: number; n: number; ci95: number[] };
+      L.push(``, `Talk → Quiz with the hybrid (${r.name}): **${t.correct}/${t.n}** (CI ${pct(t.ci95[0])}–${pct(t.ci95[1])}).`);
+    }
+  }
+  const no = results.filter((r) => r.name_only && r.llm && !r.hybrid);
+  if (no.length) {
+    L.push(``, `## Does the graph add anything? Graph vs role name only`, ``,
+      `The same LLM predicts the same held-out answers twice: once from the brain's own beliefs retrieved from the graph (seed 1 of the cross-validation), ` +
+      `and once told only the brain's role ("Skeptical CFO"), with no beliefs and no graph. If the graph did nothing, a stereotype would do as well.`, ``);
+    L.push(`| Brain | n | LLM + graph (seed 1) | Role name only | CI (name only) | McNemar p |`, `|---|---|---|---|---|---|`);
+    let g = 0, nm = 0, tot = 0;
+    for (const r of no) {
+      const s1 = (r.llm as { rows: { accuracy: number; rows: unknown[] }[] }).rows[0];
+      const n = r.name_only as { accuracy: number; correct: number; n: number; ci95: number[]; mcnemar_p_graph_vs_name: number };
+      g += Math.round(s1.accuracy * s1.rows.length); nm += n.correct; tot += n.n;
+      L.push(`| ${r.name} | ${n.n} | **${pct(s1.accuracy)}** | ${pct(n.accuracy)} | ${pct(n.ci95[0])}–${pct(n.ci95[1])} | ${n.mcnemar_p_graph_vs_name} |`);
+    }
+    L.push(`| **All brains** | ${tot} | **${g}/${tot} (${pct(g / tot)})** | ${nm}/${tot} (${pct(nm / tot)}) | | |`);
+  }
   const tq = results.filter((r) => r.talk_to_quiz);
   if (tq.length) {
     L.push(``, `## Talk → Quiz transfer`, ``, `Learn only from what the person said in Talk mode, then predict every answer they later gave in Quiz mode.`, ``);
@@ -195,7 +234,101 @@ function markdown(meta: Row, results: Row[]) {
   return L.join("\n");
 }
 
-if (flag("write-back")) {
+if (flag("add-hybrid")) {
+  // Adds the hybrid predictor (role knowledge + the brain's own answers) to an existing results.json: the same seeds and
+  // folds as the cross-validation, plus the talk -> quiz transfer.
+  (async () => {
+    const { crossValidate, predictMany } = await import("@/lib/brains");
+    const { connection } = await import("@/lib/relate");
+    const { activeProvider } = await import("@/lib/llm");
+    const { kappa, majority, mcnemar, wilson } = await import("@/lib/stats");
+    if (activeProvider() === "none") throw new Error("--add-hybrid needs an LLM (GROQ_API_KEY in web/.env.local)");
+    const q = (c: string, p: Record<string, unknown> = {}) => connection().query(c, p as never).rows as Row[];
+    const file = path.join(OUT, "results.json");
+    const data = JSON.parse(fs.readFileSync(file, "utf8"));
+    const r3x = (x: number) => Math.round(x * 1000) / 1000;
+    for (const r of data.results as Row[]) {
+      if (!r.llm) continue;
+      const id = String(r.brain);
+      const runs = [];
+      for (let seed = 1; seed <= Number(data.meta.seeds); seed++) runs.push(await crossValidate(id, { seed, store: false, mode: "hybrid" }));
+      const accs = runs.map((x) => x.accuracy), mean = accs.reduce((a, c) => a + c, 0) / accs.length;
+      const all = runs.flatMap((x) => x.rows), first = runs[0].rows;
+      const llmSeed1 = (r.llm as { rows: { rows: { claim: string; predicted: number | null; actual: number }[] }[] }).rows[0].rows;
+      const evHit = new Map(llmSeed1.map((x) => [x.claim, x.predicted === x.actual]));
+      const nameHit = new Map(((r.name_only as { rows: { claim: string; stance: number | null }[] } | undefined)?.rows ?? [])
+        .map((x) => [x.claim, x.stance === llmSeed1.find((y) => y.claim === x.claim)?.actual]));
+      const hyHits = first.map((x) => x.predicted === x.actual);
+      r.hybrid = {
+        by: runs.find((x) => x.by !== "graph")?.by ?? "graph",
+        llm_share: r3x(runs.reduce((a, x) => a + x.llm_predictions, 0) / all.length),
+        accuracy_mean: r3x(mean), accuracy_min: Math.min(...accs), accuracy_max: Math.max(...accs),
+        ci95: wilson(Math.round(mean * first.length), first.length).map(r3x),
+        kappa: r3x(kappa(all.map((x) => x.predicted ?? 9), all.map((x) => x.actual))),
+        mcnemar_p_vs_majority: r3x(mcnemar(hyHits, first.map((x) => x.baseline === x.actual))),
+        mcnemar_p_vs_evidence: r3x(mcnemar(hyHits, first.map((x) => evHit.get(x.claim)!))),
+        mcnemar_p_vs_name_only: nameHit.size ? r3x(mcnemar(hyHits, first.map((x) => Boolean(nameHit.get(x.claim))))) : null,
+        seed1_correct: hyHits.filter(Boolean).length,
+        rows: runs.map((x) => ({ seed: x.seed, accuracy: x.accuracy, rows: x.rows })),
+      };
+      const sources = r.sources as Record<string, number>;
+      if ((sources.talk ?? 0) >= 3 && (sources.answer ?? 0) >= 3) {
+        const st = q(`MATCH (:Brain {id: $id})-[s:STANCE]->(c:Claim) RETURN c.id AS claim, s.value AS v, s.source AS src`, { id });
+        const test = st.filter((x) => x.src === "answer").map((x) => String(x.claim));
+        const hide = st.filter((x) => x.src !== "talk").map((x) => String(x.claim));
+        const truth = new Map(st.map((x) => [String(x.claim), Number(x.v)]));
+        const preds = await predictMany(id, test, hide, { mode: "hybrid" });
+        const ok = preds.filter((p) => p.stance === truth.get(p.claim)).length;
+        r.hybrid_talk_to_quiz = { correct: ok, n: test.length, accuracy: r3x(ok / test.length), ci95: wilson(ok, test.length).map(r3x),
+          majority_of_talk: majority(st.filter((x) => x.src === "talk").map((x) => Number(x.v))) };
+      }
+      console.log(`  ${r.name}: hybrid ${pct(mean)} (${accs.map(pct).join(", ")})`);
+    }
+    data.meta.hybrid_added_at = new Date().toISOString();
+    fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
+    fs.writeFileSync(path.join(OUT, "results.md"), markdown(data.meta, data.results));
+    fs.rmSync(tmp, { recursive: true, force: true });
+    console.log("Added the hybrid predictor to eval/results.json and results.md");
+    process.exit(0);
+  })().catch((e) => { console.error(e); fs.rmSync(tmp, { recursive: true, force: true }); process.exit(1); });
+} else if (flag("add-name-only")) {
+  // Adds the "role name only" baseline to an existing results.json: the same LLM, told only the brain's role
+  // ("Skeptical CFO"), with no beliefs and no graph. Compared, claim by claim, with the seed-1 graph predictions.
+  (async () => {
+    const { predictNameOnly } = await import("@/lib/brains");
+    const { activeProvider } = await import("@/lib/llm");
+    const { mcnemar, wilson } = await import("@/lib/stats");
+    if (activeProvider() === "none") throw new Error("--add-name-only needs an LLM (GROQ_API_KEY in web/.env.local)");
+    const file = path.join(OUT, "results.json");
+    const data = JSON.parse(fs.readFileSync(file, "utf8"));
+    for (const r of data.results as Row[]) {
+      const llm = r.llm as { rows: { seed: number; rows: { claim: string; actual: number; predicted: number | null }[] }[] } | null;
+      if (!llm) continue;
+      const seed1 = llm.rows[0].rows;
+      const claims = seed1.map((x) => x.claim);
+      const preds: { claim: string; stance: number | null; by: string }[] = [];
+      for (let i = 0; i < claims.length; i += 6) preds.push(...(await predictNameOnly(String(r.brain), claims.slice(i, i + 6))));
+      const truth = new Map(seed1.map((x) => [x.claim, x.actual]));
+      const ok = preds.filter((p) => p.stance === truth.get(p.claim)).length;
+      const nameHits = new Map(preds.map((p) => [p.claim, p.stance === truth.get(p.claim)]));
+      r.name_only = {
+        accuracy: Math.round((ok / preds.length) * 1000) / 1000, correct: ok, n: preds.length,
+        ci95: wilson(ok, preds.length).map((x) => Math.round(x * 1000) / 1000),
+        llm_share: Math.round((preds.filter((p) => p.by !== "none").length / preds.length) * 1000) / 1000,
+        by: preds.find((p) => p.by !== "none")?.by ?? "none",
+        mcnemar_p_graph_vs_name: Math.round(mcnemar(seed1.map((x) => x.predicted === x.actual), seed1.map((x) => nameHits.get(x.claim)!)) * 1000) / 1000,
+        rows: preds,
+      };
+      console.log(`  ${r.name}: name only ${ok}/${preds.length}`);
+    }
+    data.meta.name_only_added_at = new Date().toISOString();
+    fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
+    fs.writeFileSync(path.join(OUT, "results.md"), markdown(data.meta, data.results));
+    fs.rmSync(tmp, { recursive: true, force: true });
+    console.log("Added the name-only baseline to eval/results.json and results.md");
+    process.exit(0);
+  })().catch((e) => { console.error(e); fs.rmSync(tmp, { recursive: true, force: true }); process.exit(1); });
+} else if (flag("write-back")) {
   // Store the summary from results.json on each Brain node of the REAL graph, so the app shows the same numbers as
   // eval/results.md. This is the only mode that writes to graph/brainprint.rl; stop `npm run dev` first.
   fs.rmSync(tmp, { recursive: true, force: true });
@@ -204,7 +337,8 @@ if (flag("write-back")) {
     const { connection, checkpoint } = await import("@/lib/relate");
     const { meta, results } = JSON.parse(fs.readFileSync(path.join(OUT, "results.json"), "utf8"));
     for (const r of results as Row[]) {
-      const arm = (r.llm ?? r.graph) as { accuracy_mean: number; by: string } | undefined;
+      // the app's default predictor (hybrid) when measured, else evidence-only, else graph-only
+      const arm = (r.hybrid ?? r.llm ?? r.graph) as { accuracy_mean: number; by: string } | undefined;
       if (!arm) continue;
       connection().query(
         `MATCH (b:Brain {id: $id}) SET b.cv_accuracy = $acc, b.cv_n = $n, b.cv_baseline = $base, b.cv_by = $by,

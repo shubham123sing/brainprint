@@ -26,10 +26,10 @@ What the tour prints, from the committed graph:
 
 | question (in [graph/tour.cypher](graph/tour.cypher)) | answer |
 |---|---|
-| Q1 Is every panel citation backed by the citing brain's own belief? | 28 citations, **0 unbacked**. Talk-built brains back them with their own words too |
-| Q2 Which pitch sentence lights up an average brain (TRIBE v2), and whom does it put off? | "We are raising one million dollars." (default-mode z = 1.79) puts off the CFO and the investor |
+| Q1 Is every panel citation backed by the citing brain's own belief? | 44 citations, **0 unbacked**. Talk-built brains back them with their own words too |
+| Q2 Which pitch sentence lights up an average brain (TRIBE v2), and whom does it put off? | "We are raising one million dollars." (default-mode z = 1.79) puts off the CFO, the investor and the student |
 | Q3 Which brains share a belief, and where do they clash? | freelancer × investor share 10 beliefs and clash on 1: "I trust AI to handle my money-related paperwork." |
-| Q4 Which points of a pitch split the panel? | 4 points, e.g. automatic tax categories land with 3 brains and put off the CFO |
+| Q4 Which points of a pitch split the panel? | 5 points, e.g. automatic tax categories land with the investor and the freelancer and put off the CFO |
 | Q5 Shortest belief path between the CFO and the student? | 2 hops, through "I trust SaaS tools to deliver value." |
 | Q6 Does every belief learned by talking keep the person's exact words? | 11/11 (CFO) and 7/7 (student) |
 
@@ -37,7 +37,7 @@ What the tour prints, from the committed graph:
 |---|---|
 | Relate and connected context | [How it uses Relate](#how-it-uses-relate), [graph/tour.cypher](graph/tour.cypher), [Why Relate](#why-relate) |
 | Functionality | `npm test`, [CI](.github/workflows/ci.yml) on Ubuntu and Windows, the app itself |
-| Usefulness | [Use case](#use-case), [Results](#results-npm-run-eval-full-table-in-evalresultsmd): measured against majority and crowd baselines |
+| Usefulness | [Use case](#use-case), [Results](#results-npm-run-eval-full-table-in-evalresultsmd): measured against majority, crowd and role-name baselines |
 | Documentation | [Setup and run](#setup-and-run), [docs/RELATE_NOTES.md](docs/RELATE_NOTES.md) |
 
 ---
@@ -131,19 +131,20 @@ A brain *is* a graph, and a panel *is* a query across graphs. Each thing the app
   - **Cross-validation:** seeded 4-fold, run from the brain's page or for every brain with `npm run eval`. It is compared with baselines that never see the held-out answers.
 
 ### Results (`npm run eval`, full table in [eval/results.md](eval/results.md))
-3 seeds of 4-fold cross-validation on the committed graph, LLM `openai/gpt-oss-120b` on Groq. Every prediction is in [eval/results.json](eval/results.json), so each number can be recomputed.
+3 seeds of 4-fold cross-validation on the committed graph, LLM `openai/gpt-oss-120b` on Groq. Every prediction is in [eval/results.json](eval/results.json), so each number can be recomputed. The app uses the **hybrid** predictor: the LLM starts from the brain's role ("Skeptical CFO") and lets the brain's own answers, retrieved from the graph, override it where they differ.
 
-| brain (built from) | n | LLM + graph retrieval | 95% CI | majority baseline | crowd baseline | graph only, no LLM |
-|---|---|---|---|---|---|---|
-| Skeptical CFO (11 Talk beliefs) | 11 | **97%** | 74–100% | 73% | 73% | 61% |
-| Cautious investor (22 scripted + 1 Quiz) | 23 | **67%** | 45–81% | 61% | 70% | 55% |
-| Busy freelancer (22 scripted) | 22 | **65%** | 43–80% | 64% | 68% | 56% |
-| Budget-conscious student (7 Talk + 14 Quiz) | 21 | **52%** | 32–72% | 33% | 48% | 29% |
+| brain (built from) | n | **hybrid (app)** | 95% CI | majority baseline | crowd baseline | evidence only | role name only |
+|---|---|---|---|---|---|---|---|
+| Skeptical CFO (11 Talk beliefs) | 11 | **91%** | 62–98% | 73% | 73% | 97% | 82% |
+| Cautious investor (22 scripted + 1 Quiz) | 23 | **80%** | 58–90% | 61% | 70% | 67% | 83% |
+| Busy freelancer (22 scripted) | 22 | **67%** | 47–84% | 64% | 68% | 65% | 82% |
+| Budget-conscious student (7 Talk + 14 Quiz) | 21 | **59%** | 37–76% | 33% | 48% | 52% | 62% |
+| **all 77 held-out answers** | 77 | **72%** | | 56% | 64% | 67% | 77% |
 
-- **Majority baseline:** always predict the most common answer of the *training* folds. **Crowd baseline:** predict what the *other* brains answered. The crowd is the harder one to beat: it asks whether a personal brain knows more than "what people in general say".
-- **Talk → Quiz transfer** (the product's main claim): learning only from the student's 7 Talk beliefs, the brain predicted **7 of 14** later Quiz answers (50%, CI 27–73%), against 36% majority and 57% crowd.
+- **Baselines:** *majority* always predicts the most common answer of the *training* folds. *Crowd* predicts what the *other* brains answered. *Role name only* is the same LLM told only "Cautious investor", with no beliefs and no graph: a stereotype.
+- **What we learned:** the hybrid beats evidence-only on 3 of 4 brains (+5 points overall; investor p = 0.016). But on these brains a **role name alone does as well** (77%, no significant difference from the hybrid). That is expected: the investor and freelancer brains were scripted by us from the stereotype. A brain only earns its keep where a person *differs* from their stereotype, which needs real people. That is the next step, and we would rather show it than hide it.
+- **Talk → Quiz transfer** (the product's main claim): learning only from the student's 7 Talk beliefs, the hybrid predicted **8 of 14** later Quiz answers (CI 33–79%); evidence-only got 7 of 14.
 - **Sealed predictions:** every Quiz prediction is stored in the graph *before* the question is shown. The student brain got 7 of 14 right.
-- **Honest reading:** only the CFO brain clearly beats both baselines, and with 11 answers even that is not statistically significant (McNemar p = 0.5). The investor and freelancer brains were built from scripted answers. The graph-only predictor (no LLM) is worse than the baseline: the LLM is what reads the evidence the graph retrieves.
 - **No leakage:** held-out answers are hidden from the prompt and from graph retrieval, and the trainer's description of a brain is never shown to the predictor. Tests pin all three ([web/test/graph.test.ts](web/test/graph.test.ts)).
 
 How the design got here (earlier, unseeded runs on the two scripted brains):

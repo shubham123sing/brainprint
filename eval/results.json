@@ -5,7 +5,9 @@
     "folds": 4,
     "provider": "groq",
     "model": "openai/gpt-oss-120b",
-    "note": "Run on a copy of graph/brainprint.rl. Baselines never see the held-out answers. Example brains were built from scripted answers."
+    "note": "Run on a copy of graph/brainprint.rl. Baselines never see the held-out answers. Example brains were built from scripted answers.",
+    "name_only_added_at": "2026-11-27T16:56:32.044Z",
+    "hybrid_added_at": "2026-11-27T17:14:40.156Z"
   },
   "results": [
     {
@@ -1119,6 +1121,675 @@
           0.268,
           0.732
         ]
+      },
+      "name_only": {
+        "accuracy": 0.619,
+        "correct": 13,
+        "n": 21,
+        "ci95": [
+          0.409,
+          0.792
+        ],
+        "llm_share": 1,
+        "by": "groq:openai/gpt-oss-120b",
+        "mcnemar_p_graph_vs_name": 0.219,
+        "rows": [
+          {
+            "claim": "p_fundraise_big",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "idea_freelancers_hate_bookkeeping_034et:c3",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "idea_freelancers_hate_bookkeeping_034et:c1",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_features",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws23usg_eokq",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06krh_pfxt",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws23us5_p1li",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws2468q_57dj",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws23usa_hney",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws2468n_4hrh",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws23usk_76ot",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_freelance_admin",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_market_big",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06ftp_kwbt",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_numbers",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_pickup",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mws2468r_8w9c",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "idea_freelancers_hate_bookkeeping_034et:c5",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_speed",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "idea_ledgerly_v1_w8k0l:c4",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "idea_ai_tutor_subscription_for_every_student_25gkv:c1",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          }
+        ]
+      },
+      "hybrid": {
+        "by": "groq:openai/gpt-oss-120b",
+        "llm_share": 1,
+        "accuracy_mean": 0.587,
+        "accuracy_min": 0.571,
+        "accuracy_max": 0.619,
+        "ci95": [
+          0.365,
+          0.755
+        ],
+        "kappa": 0.316,
+        "mcnemar_p_vs_majority": 0.125,
+        "mcnemar_p_vs_evidence": 0.25,
+        "mcnemar_p_vs_name_only": 1,
+        "seed1_correct": 12,
+        "rows": [
+          {
+            "seed": 1,
+            "accuracy": 0.571,
+            "rows": [
+              {
+                "claim": "p_fundraise_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c1",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws23usg_eokq",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06krh_pfxt",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws23us5_p1li",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws2468q_57dj",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws23usa_hney",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws2468n_4hrh",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws23usk_76ot",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 1
+              },
+              {
+                "claim": "p_freelance_admin",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_market_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06ftp_kwbt",
+                "actual": -1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_pickup",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mws2468r_8w9c",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c5",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "idea_ledgerly_v1_w8k0l:c4",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "idea_ai_tutor_subscription_for_every_student_25gkv:c1",
+                "actual": -1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 2,
+            "accuracy": 0.571,
+            "rows": [
+              {
+                "claim": "talk_mws23usg_eokq",
+                "actual": -1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06ftp_kwbt",
+                "actual": -1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c5",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws2468r_8w9c",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws23us5_p1li",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws23usa_hney",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06krh_pfxt",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "idea_ai_tutor_subscription_for_every_student_25gkv:c1",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c3",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws2468n_4hrh",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws23usk_76ot",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "idea_ledgerly_v1_w8k0l:c4",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_market_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_fundraise_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "talk_mws2468q_57dj",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c1",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_pickup",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_freelance_admin",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 3,
+            "accuracy": 0.619,
+            "rows": [
+              {
+                "claim": "talk_mws23us5_p1li",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws23usk_76ot",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 0
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 0
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c5",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06ftp_kwbt",
+                "actual": -1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mws23usa_hney",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": -1,
+                "fold": 0
+              },
+              {
+                "claim": "idea_ledgerly_v1_w8k0l:c4",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws2468n_4hrh",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mws2468q_57dj",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "idea_freelancers_hate_bookkeeping_034et:c1",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06krh_pfxt",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mws2468r_8w9c",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_market_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_pickup",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "talk_mws23usg_eokq",
+                "actual": -1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_freelance_admin",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_fundraise_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "idea_ai_tutor_subscription_for_every_student_25gkv:c1",
+                "actual": -1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          }
+        ]
+      },
+      "hybrid_talk_to_quiz": {
+        "correct": 8,
+        "n": 14,
+        "accuracy": 0.571,
+        "ci95": [
+          0.326,
+          0.786
+        ],
+        "majority_of_talk": 1
       }
     },
     {
@@ -2257,6 +2928,694 @@
         ],
         "majority_baseline": 0.636,
         "crowd_baseline": 0.682
+      },
+      "name_only": {
+        "accuracy": 0.818,
+        "correct": 18,
+        "n": 22,
+        "ci95": [
+          0.615,
+          0.927
+        ],
+        "llm_share": 0.955,
+        "by": "groq:openai/gpt-oss-120b",
+        "mcnemar_p_graph_vs_name": 0.289,
+        "rows": [
+          {
+            "claim": "p_jargon",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_story",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_compliance",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_numbers",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_discount",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_ai_buzz",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_privacy_first",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_automation",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_ai_trust",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_features",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_simple_ui",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_price_free",
+            "stance": null,
+            "by": "none"
+          },
+          {
+            "claim": "p_price_monthly",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_integrations",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_notifications",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_speed",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_social_proof",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_freelance_admin",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_privacy_bank",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_taxes_diy",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_mission",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_mobile",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          }
+        ]
+      },
+      "hybrid": {
+        "by": "groq:openai/gpt-oss-120b",
+        "llm_share": 1,
+        "accuracy_mean": 0.667,
+        "accuracy_min": 0.636,
+        "accuracy_max": 0.682,
+        "ci95": [
+          0.473,
+          0.836
+        ],
+        "kappa": 0.429,
+        "mcnemar_p_vs_majority": 1,
+        "mcnemar_p_vs_evidence": 1,
+        "mcnemar_p_vs_name_only": 0.453,
+        "seed1_correct": 15,
+        "rows": [
+          {
+            "seed": 1,
+            "accuracy": 0.682,
+            "rows": [
+              {
+                "claim": "p_jargon",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_story",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_compliance",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_discount",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_ai_buzz",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_privacy_first",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_automation",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_simple_ui",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_price_free",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_price_monthly",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_integrations",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_notifications",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_social_proof",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_freelance_admin",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_privacy_bank",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_taxes_diy",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_mission",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_mobile",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 2,
+            "accuracy": 0.636,
+            "rows": [
+              {
+                "claim": "p_price_free",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_simple_ui",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_social_proof",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_freelance_admin",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_price_monthly",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_jargon",
+                "actual": -1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_discount",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_taxes_diy",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_privacy_bank",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_privacy_first",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_story",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_ai_buzz",
+                "actual": 0,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_automation",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_mobile",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_compliance",
+                "actual": 0,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_notifications",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_mission",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_integrations",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 3,
+            "accuracy": 0.682,
+            "rows": [
+              {
+                "claim": "p_mobile",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_simple_ui",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_discount",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_taxes_diy",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_jargon",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_ai_buzz",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_privacy_first",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_social_proof",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_compliance",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_price_free",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_privacy_bank",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_notifications",
+                "actual": 0,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_story",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_automation",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_freelance_admin",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_price_monthly",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_integrations",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_mission",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -3453,6 +4812,723 @@
           0.207,
           1
         ]
+      },
+      "name_only": {
+        "accuracy": 0.826,
+        "correct": 19,
+        "n": 23,
+        "ci95": [
+          0.629,
+          0.93
+        ],
+        "llm_share": 1,
+        "by": "groq:openai/gpt-oss-120b",
+        "mcnemar_p_graph_vs_name": 0.039,
+        "rows": [
+          {
+            "claim": "p_market_big",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_humor",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_ai_trust",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_story",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_marketplace",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_mission",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_jargon",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_unit_econ",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_features",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_numbers",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_food_waste",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_ai_buzz",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_social_proof",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_compliance",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_ai_skeptic",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_fundraise_big",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_sustain_price",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_price_cut",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06kri_m0u3",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_speed",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_new_brand",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_traction",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_team",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          }
+        ]
+      },
+      "hybrid": {
+        "by": "groq:openai/gpt-oss-120b",
+        "llm_share": 1,
+        "accuracy_mean": 0.797,
+        "accuracy_min": 0.739,
+        "accuracy_max": 0.826,
+        "ci95": [
+          0.581,
+          0.903
+        ],
+        "kappa": 0.653,
+        "mcnemar_p_vs_majority": 0.227,
+        "mcnemar_p_vs_evidence": 0.016,
+        "mcnemar_p_vs_name_only": 1,
+        "seed1_correct": 19,
+        "rows": [
+          {
+            "seed": 1,
+            "accuracy": 0.826,
+            "rows": [
+              {
+                "claim": "p_market_big",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_humor",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_story",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_marketplace",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_mission",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_jargon",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_unit_econ",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_food_waste",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_ai_buzz",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_social_proof",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_compliance",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_ai_skeptic",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_fundraise_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_sustain_price",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_price_cut",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06kri_m0u3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_new_brand",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_traction",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_team",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 2,
+            "accuracy": 0.826,
+            "rows": [
+              {
+                "claim": "p_unit_econ",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_fundraise_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_social_proof",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_team",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_jargon",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_food_waste",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_compliance",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_price_cut",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_sustain_price",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_ai_skeptic",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_mission",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_humor",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_market_big",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_new_brand",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_story",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06kri_m0u3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_ai_buzz",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_traction",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_marketplace",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 3,
+            "accuracy": 0.739,
+            "rows": [
+              {
+                "claim": "p_unit_econ",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_mission",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_marketplace",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_social_proof",
+                "actual": 1,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_story",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_market_big",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_sustain_price",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_traction",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_features",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_humor",
+                "actual": 0,
+                "predicted": 0,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_jargon",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_ai_buzz",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_food_waste",
+                "actual": 0,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_new_brand",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_numbers",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_compliance",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_price_cut",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_speed",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "p_fundraise_big",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "talk_mwr06kri_m0u3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_team",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "p_ai_skeptic",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -4063,6 +6139,375 @@
         ],
         "majority_baseline": 0.727,
         "crowd_baseline": 0.727
+      },
+      "name_only": {
+        "accuracy": 0.818,
+        "correct": 9,
+        "n": 11,
+        "ci95": [
+          0.523,
+          0.949
+        ],
+        "llm_share": 1,
+        "by": "groq:openai/gpt-oss-120b",
+        "mcnemar_p_graph_vs_name": 1,
+        "rows": [
+          {
+            "claim": "talk_mwr06plg_sbqc",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06ftt_tsni",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06krg_smy3",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06plf_a1bt",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06ftp_kwbt",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "p_ai_trust",
+            "stance": -1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06krh_pfxt",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06plh_8r0g",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06kri_m0u3",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06ftt_rypw",
+            "stance": 0,
+            "by": "groq:openai/gpt-oss-120b"
+          },
+          {
+            "claim": "talk_mwr06ple_44pd",
+            "stance": 1,
+            "by": "groq:openai/gpt-oss-120b"
+          }
+        ]
+      },
+      "hybrid": {
+        "by": "groq:openai/gpt-oss-120b",
+        "llm_share": 0.909,
+        "accuracy_mean": 0.909,
+        "accuracy_min": 0.818,
+        "accuracy_max": 1,
+        "ci95": [
+          0.623,
+          0.984
+        ],
+        "kappa": 0.763,
+        "mcnemar_p_vs_majority": 1,
+        "mcnemar_p_vs_evidence": 1,
+        "mcnemar_p_vs_name_only": 1,
+        "seed1_correct": 9,
+        "rows": [
+          {
+            "seed": 1,
+            "accuracy": 0.818,
+            "rows": [
+              {
+                "claim": "talk_mwr06plg_sbqc",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06ftt_tsni",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06krg_smy3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06plf_a1bt",
+                "actual": 1,
+                "predicted": 1,
+                "by": "graph",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06ftp_kwbt",
+                "actual": -1,
+                "predicted": 1,
+                "by": "graph",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": -1,
+                "predicted": 1,
+                "by": "graph",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06krh_pfxt",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06plh_8r0g",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06kri_m0u3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06ftt_rypw",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "talk_mwr06ple_44pd",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 2,
+            "accuracy": 1,
+            "rows": [
+              {
+                "claim": "talk_mwr06krh_pfxt",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06plh_8r0g",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06ftt_rypw",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06plg_sbqc",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06ftt_tsni",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06ple_44pd",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06kri_m0u3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06plf_a1bt",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06ftp_kwbt",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "talk_mwr06krg_smy3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          },
+          {
+            "seed": 3,
+            "accuracy": 0.909,
+            "rows": [
+              {
+                "claim": "talk_mwr06plf_a1bt",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06kri_m0u3",
+                "actual": 1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06krg_smy3",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 0
+              },
+              {
+                "claim": "talk_mwr06ftp_kwbt",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06ftt_rypw",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "p_ai_trust",
+                "actual": -1,
+                "predicted": -1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 1
+              },
+              {
+                "claim": "talk_mwr06ftt_tsni",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06krh_pfxt",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06ple_44pd",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 2
+              },
+              {
+                "claim": "talk_mwr06plh_8r0g",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              },
+              {
+                "claim": "talk_mwr06plg_sbqc",
+                "actual": 1,
+                "predicted": 1,
+                "by": "groq:openai/gpt-oss-120b",
+                "baseline": 1,
+                "fold": 3
+              }
+            ]
+          }
+        ]
       }
     }
   ]

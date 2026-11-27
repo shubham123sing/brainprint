@@ -8,6 +8,8 @@
 //   1. the graph retrieves evidence: the brain's answered claims most similar to the target (Relate VECTOR INDEX
 //      claim_embedding) and concept paths (target)-[:MENTIONS]->(concept)<-[:MENTIONS]-(answered)<-[:STANCE]-(brain);
 //   2. a free LLM (Groq / Ollama) reads that evidence and predicts agree / neutral / disagree, citing the answers it used.
+//      Default "hybrid" mode: the LLM starts from the brain's role ("Skeptical CFO") and lets the brain's own answers
+//      override it where they differ (measured better than evidence-only; see eval/results.md).
 //   Without an LLM, a graph-only predictor (similarity vote + concept mean + base rate) is used.
 //   Measured accuracy (seeded 4-fold CV, held-out baselines, confidence intervals): see eval/results.md (npm run eval).
 // Self-test: the prediction for a training question is stored as a pending Check BEFORE the question is shown,
@@ -161,6 +163,21 @@ Return JSON only:
 {"predictions":[{"claim":"T1","stance":"agree|neutral|disagree","confidence":0.0-1.0,"because":["A3","A7"]}]}
 One entry per target (T1, T2, ...). "because" lists 1-3 answer keys (A1, A2, ...) that support the prediction.`;
 
+// Hybrid: start from what a typical person in this role would say, then let this person's own answers override it.
+// Measured against "evidence only" and "role name only" in eval/results.md.
+const HYBRID_SYSTEM = `You model ONE specific person ("brain"). You get their ROLE (e.g. "Skeptical CFO") and the answers they gave:
+statements marked agree / neutral / disagree, sometimes with a note. Predict how THIS person would answer new statements.
+Method: start from what a typical person in that role would answer. Then look at this person's own answers: wherever they show
+this person differs from the typical role (on the same topic or a closely related value), follow the person, not the stereotype.
+Similar-sounding statements can carry the OPPOSITE stance; reason about values, not word overlap. Targets that are points from a
+pitch or idea: "agree" means the point LANDS with this person, "disagree" means it PUTS THEM OFF, "neutral" means indifferent.
+Return JSON only:
+{"predictions":[{"claim":"T1","stance":"agree|neutral|disagree","confidence":0.0-1.0,"because":["A3","A7"]}]}
+One entry per target (T1, T2, ...). "because" lists 0-3 answer keys (A1, A2, ...) that support the prediction (empty if it rests on the role alone).`;
+
+/** Predictor used by the app (Quiz, panel matrix). The eval compares both modes; see eval/results.md. */
+export const DEFAULT_MODE: PredictMode = "hybrid";
+
 const INV: Record<string, Stance> = { agree: 1, neutral: 0, disagree: -1 };
 
 async function llmJson(system: string, user: string) {
@@ -185,16 +202,45 @@ async function llmJson(system: string, user: string) {
   return null;
 }
 
+const NAME_ONLY_SYSTEM = `Predict how a typical person described by a short role (e.g. "Skeptical CFO") would answer statements:
+agree / neutral / disagree. You get ONLY the role, no other evidence: use common knowledge about such people.
+Targets that are points from a pitch: "agree" means the point lands with them, "disagree" means it puts them off.
+Return JSON only: {"predictions":[{"claim":"T1","stance":"agree|neutral|disagree","confidence":0.0-1.0}]}, one entry per target.`;
+
+/**
+ * Baseline for evaluations: the same LLM, told only the brain's role name (e.g. "Skeptical CFO"), with no beliefs, quotes
+ * or graph retrieval. If a brain cannot beat this, its graph adds nothing over a stereotype. Returns null stances on failure.
+ */
+export async function predictNameOnly(brain: string, claims: string[]): Promise<{ claim: string; stance: Stance | null; by: string }[]> {
+  if (!claims.length) return [];
+  const name = String(q(`MATCH (b:Brain {id: $brain}) RETURN b.name AS n`, { brain })[0]?.n ?? brain).replace(/\s*\(example\)\s*/i, "").trim();
+  const texts = new Map(q(`MATCH (k:Claim) WHERE k.id IN $ids RETURN k.id AS id, k.text AS t`, { ids: claims }).map((r) => [String(r.id), String(r.t)]));
+  const prompt = `ROLE: ${name}\n\nPREDICT:\n` + claims.map((c, i) => `- [T${i + 1}] "${texts.get(c)}"`).join("\n");
+  const res = await llmJson(NAME_ONLY_SYSTEM, prompt);
+  const preds = (res?.json?.predictions ?? []) as { claim: string; stance: string }[];
+  const key = (s: unknown) => String(s ?? "").replace(/[\[\]\s]/g, "").toUpperCase();
+  return claims.map((c, i) => {
+    const p = preds.find((y) => key(y.claim) === `T${i + 1}`) ?? (preds.length === claims.length ? preds[i] : undefined);
+    const s = String(p?.stance ?? "").toLowerCase();
+    return { claim: c, stance: s in INV ? INV[s] : null, by: res && s in INV ? res.model : "none" };
+  });
+}
+
 /**
  * Predict a brain's stance on several claims in ONE LLM call (GraphRAG). `exclude` hides answers (cross-validation).
  * Falls back to the graph-only predictor per claim if no LLM is configured or the call fails.
  */
-export async function predictMany(brain: string, claims: string[], exclude: string[] = []): Promise<Prediction[]> {
+export type PredictMode = "evidence" | "hybrid";
+
+export async function predictMany(
+  brain: string, claims: string[], exclude: string[] = [], opts: { mode?: PredictMode } = {}
+): Promise<Prediction[]> {
   if (!claims.length) return [];
-  const built = buildPredictionPrompt(brain, claims, exclude);
+  const mode = opts.mode ?? DEFAULT_MODE;
+  const built = buildPredictionPrompt(brain, claims, exclude, mode);
   if (!built) return claims.map((c) => graphPredict(brain, c, exclude));
   const { prompt, graph, aKey } = built;
-  const res = await llmJson(PERSONA_SYSTEM, prompt);
+  const res = await llmJson(mode === "hybrid" ? HYBRID_SYSTEM : PERSONA_SYSTEM, prompt);
   const preds = (res?.json?.predictions ?? []) as { claim: string; stance: string; confidence: number; because?: string[] }[];
   const key = (s: unknown) => String(s ?? "").replace(/[\[\]\s]/g, "").toUpperCase();
   return graph.map((x, i) => {
@@ -218,8 +264,9 @@ export async function predictMany(brain: string, claims: string[], exclude: stri
  * The exact prompt the LLM sees for a prediction (exported so tests can check what is and is not in it).
  * Returns null when the brain has no visible answers. `exclude` and the targets themselves are hidden.
  */
-export function buildPredictionPrompt(brain: string, claims: string[], exclude: string[] = []) {
+export function buildPredictionPrompt(brain: string, claims: string[], exclude: string[] = [], mode: PredictMode = DEFAULT_MODE) {
   const b = q(`MATCH (b:Brain {id: $brain}) RETURN b.name AS name`, { brain })[0];
+  const role = String(b?.name ?? brain).replace(/\s*\(example\)\s*/i, "").trim();
   // The trainer's description ("skeptical of hype, wants evidence…") is deliberately NOT given to the predictor: it can
   // encode the very stances being tested. Predictions come from the brain's answers only (a test pins this).
   const hidden = [...exclude, ...claims];
@@ -240,7 +287,7 @@ export function buildPredictionPrompt(brain: string, claims: string[], exclude: 
   // Short keys (A1.., T1..) instead of long graph ids: models copy them reliably; we map them back to graph ids.
   const aKey = new Map(ordered.map((a, i) => [`A${i + 1}`, String(a.id)]));
   const prompt =
-    `BRAIN: ${b?.name ?? brain}\n` +
+    (mode === "hybrid" ? `ROLE: ${role}\n` : `BRAIN: ${b?.name ?? brain}\n`) +
     `ANSWERS (${ordered.length}${answers.length > ordered.length ? ` most relevant of ${answers.length}` : ""}):\n` +
     ordered.map((a, i) => `- [A${i + 1}] "${a.text}" -> ${lab(a.v)}${a.note ? ` (note: ${a.note})` : ""}`).join("\n") +
     `\n\nPREDICT:\n` +
@@ -391,7 +438,7 @@ export type CvRow = { claim: string; actual: number; predicted: number | null; b
  * - Returns every prediction (`rows`) so scripts can compute confidence intervals and kappa.
  * Stored on the Brain node (cv_accuracy, cv_n, cv_baseline, cv_seed) unless `store: false`.
  */
-export async function crossValidate(brain: string, opts: { seed?: number; folds?: number; store?: boolean } = {}) {
+export async function crossValidate(brain: string, opts: { seed?: number; folds?: number; store?: boolean; mode?: PredictMode } = {}) {
   const seed = opts.seed ?? 1, k = opts.folds ?? 4;
   const answers = q(`MATCH (:Brain {id: $brain})-[s:STANCE]->(c:Claim) RETURN c.id AS id, s.value AS v ORDER BY c.id`, { brain })
     .map((a) => ({ id: String(a.id), v: Number(a.v) }));
@@ -402,7 +449,7 @@ export async function crossValidate(brain: string, opts: { seed?: number; folds?
   const rows: CvRow[] = [];
   for (const [f, fold] of folds.entries()) {
     const base = majority(ids.filter((id) => !fold.includes(id)).map((id) => truth.get(id)!));
-    for (const p of await predictMany(brain, fold, fold))
+    for (const p of await predictMany(brain, fold, fold, { mode: opts.mode }))
       rows.push({ claim: p.claim, actual: truth.get(p.claim)!, predicted: p.stance, by: p.by, baseline: base, fold: f });
   }
   const n = rows.length;

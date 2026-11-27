@@ -77,6 +77,8 @@ test("no leakage: the prediction prompt hides held-out answers and never include
   const description = String(q(`MATCH (b:Brain {id: $b}) RETURN b.description AS d`, { b: INVESTOR })[0].d);
   assert.ok(description.length > 10);
   assert.ok(!built.prompt.includes(description), "trainer description reached the prompt");
+  assert.equal(brains.DEFAULT_MODE, "hybrid");
+  assert.match(built.prompt, /^ROLE: Cautious investor\n/, "the hybrid prompt names the role (without '(example)')");
   for (const c of [target, ...hidden.map((h) => String(h.id))]) assert.ok(![...built.aKey.values()].includes(c));
 });
 

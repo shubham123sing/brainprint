@@ -93,22 +93,22 @@ await card(page, "01_thumbnail.png", `
   <div style="position:absolute;left:80px;top:70px"><h1>Brain<span>Print</span></h1>
   <div style="font-size:42px;margin-top:16px;color:#d9d8e6">Persona brains that predict before you answer.</div>
   <div style="margin-top:26px;display:flex;gap:14px;font-size:24px">
-    <span style="padding:8px 18px;border-radius:999px;border:2px solid #4b4a66;background:#17161f">✅ CFO brain 97% vs 73% baseline</span>
-    <span style="padding:8px 18px;border-radius:999px;border:2px solid #4b4a66;background:#17161f">🔗 28/28 citations backed</span>
+    <span style="padding:8px 18px;border-radius:999px;border:2px solid #4b4a66;background:#17161f">✅ 72% of held-out answers vs 56% baseline</span>
+    <span style="padding:8px 18px;border-radius:999px;border:2px solid #4b4a66;background:#17161f">🔗 44/44 citations backed</span>
     <span style="padding:8px 18px;border-radius:999px;border:2px solid #4b4a66;background:#17161f">🕸️ One Relate graph</span></div></div>
   <div style="position:absolute;right:70px;top:84px;font-size:26px;color:#9d9cb3;text-align:right;line-height:1.5">Relate by Neo4j Hackathon<br/><b style="color:#e5604f">Context, connected</b></div>
   <div style="position:absolute;left:90px;top:420px;width:1320px;height:540px;border-radius:16px;border:2px solid #3a3a48;
     box-shadow:0 30px 80px rgba(0,0,0,.6);background:url('${panelData}') 0 0/1320px 880px no-repeat;transform:rotate(-1.2deg)"></div>`);
 await card(page, "02_measured.png", `
   <h2>Measured, <em>not claimed</em></h2>
-  <p class="sub">Seeded 4-fold cross-validation, 3 seeds. Baselines never see the held-out answers.</p>
-  <table><tr><th class="l">brain</th><th>predicts held-out answers</th><th>95% CI</th><th>always-guess</th><th>crowd</th></tr>
-  <tr><td class="l">Skeptical CFO</td><td class="n">97%</td><td>74–100%</td><td>73%</td><td>73%</td></tr>
-  <tr><td class="l">Cautious investor</td><td class="n">67%</td><td>45–81%</td><td>61%</td><td>70%</td></tr>
-  <tr><td class="l">Busy freelancer</td><td class="n">65%</td><td>43–80%</td><td>64%</td><td>68%</td></tr>
-  <tr><td class="l">Budget student</td><td class="n">52%</td><td>32–72%</td><td>33%</td><td>48%</td></tr></table>
-  <div class="row"><span><b>28 / 28</b> citations backed</span><span><b>15</b> tests · CI green</span><span><b>sealed</b> predictions</span></div>
-  <div class="foot">Small samples, wide intervals. Every prediction is in eval/results.json. Example brains are built from scripted answers.</div>`);
+  <p class="sub">Hybrid predictor, seeded 4-fold cross-validation, 3 seeds. Baselines never see the held-out answers.</p>
+  <table><tr><th class="l">brain</th><th>predicts held-out answers</th><th>95% CI</th><th>always-guess</th><th>crowd</th><th>role name only</th></tr>
+  <tr><td class="l">Skeptical CFO</td><td class="n">91%</td><td>62–98%</td><td>73%</td><td>73%</td><td>82%</td></tr>
+  <tr><td class="l">Cautious investor</td><td class="n">80%</td><td>58–90%</td><td>61%</td><td>70%</td><td>83%</td></tr>
+  <tr><td class="l">Busy freelancer</td><td class="n">67%</td><td>47–84%</td><td>64%</td><td>68%</td><td>82%</td></tr>
+  <tr><td class="l">Budget student</td><td class="n">59%</td><td>37–76%</td><td>33%</td><td>48%</td><td>62%</td></tr><tr><td class="l"><b>all 77 answers</b></td><td class="n">72%</td><td></td><td>56%</td><td>64%</td><td>77%</td></tr></table>
+  <div class="row"><span><b>44 / 44</b> citations backed</span><span><b>15</b> tests · CI green</span><span><b>sealed</b> predictions</span></div>
+  <div class="foot">Honest: on these scripted example brains a role name alone scores 77%. Real people are the real test. Every prediction is in eval/results.json.</div>`);
 if (graphData) await card(page, "10_graph.png", `
   <h2 style="font-size:52px">One <em>Relate</em> graph</h2>
   <p class="sub">(:Brain)-[:STANCE]->(:Claim)-[:MENTIONS]->(:Concept) · shared claims connect the brains</p>
@@ -116,12 +116,12 @@ if (graphData) await card(page, "10_graph.png", `
 await card(page, "11_judge_tour.png", `
   <h2>Judge tour: <em>npm run tour</em></h2>
   <p class="sub">6 multi-hop Cypher questions on graph/tour.cypher. No API key.</p>
-<pre><i>Q1 Citation audit</i>   28 citations, <b>0 unbacked</b>
+<pre><i>Q1 Citation audit</i>   44 citations, <b>0 unbacked</b>
 <i>Q2 TRIBE × personas</i>  "We are raising one million dollars."  default-mode z = 1.79
-                      puts off: Skeptical CFO, Cautious investor
+                      puts off: Skeptical CFO, Cautious investor, student
 <i>Q3 Shared beliefs</i>   freelancer × investor share 10 beliefs, clash on 1:
                       "I trust AI to handle my money-related paperwork."
-<i>Q4 Split points</i>     automatic tax categories: lands with 3 brains, puts off the CFO
+<i>Q4 Split points</i>     5 points; automatic tax categories: lands with 2 brains, puts off the CFO
 <i>Q5 Shortest path</i>    Skeptical CFO → "I trust SaaS tools to deliver value." → student   (<b>2 hops</b>)
 <i>Q6 Exact words</i>      talk beliefs with a verbatim quote: <b>11/11</b> (CFO), <b>7/7</b> (student)</pre>`);
 

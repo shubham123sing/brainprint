@@ -117,17 +117,17 @@ footer { padding: 30px 0 50px; color: var(--muted); font-size: 15px; border-top:
 
   <section>
     <h2>Measured, not claimed</h2>
-    <p class="lead">Seeded 4-fold cross-validation (3 seeds): hide a quarter of a brain's answers, predict them from the rest, and compare with the training majority and with what the other brains said (the crowd).</p>
+    <p class="lead">Seeded 4-fold cross-validation (3 seeds): hide a quarter of a brain's answers, predict them from the rest (hybrid: the role, overridden by the brain's own answers), and compare with the training majority, with what the other brains said (the crowd), and with the role name alone.</p>
     <table>
-      <thead><tr><th>Brain</th><th>Accuracy</th><th>Majority</th><th>Crowd</th><th>Answers</th></tr></thead>
+      <thead><tr><th>Brain</th><th>Accuracy</th><th>Majority</th><th>Crowd</th><th>Role name only</th><th>Answers</th></tr></thead>
       <tbody>
-        <tr><td>Skeptical CFO</td><td class="num">97%</td><td class="num">73%</td><td class="num">73%</td><td class="num">11</td></tr>
-        <tr><td>Cautious investor</td><td class="num">67%</td><td class="num">61%</td><td class="num">70%</td><td class="num">23</td></tr>
-        <tr><td>Busy freelancer</td><td class="num">65%</td><td class="num">64%</td><td class="num">68%</td><td class="num">22</td></tr>
-        <tr><td>Budget-conscious student</td><td class="num">52%</td><td class="num">33%</td><td class="num">48%</td><td class="num">21</td></tr>
+        <tr><td>Skeptical CFO</td><td class="num">91%</td><td class="num">73%</td><td class="num">73%</td><td class="num">82%</td><td class="num">11</td></tr>
+        <tr><td>Cautious investor</td><td class="num">80%</td><td class="num">61%</td><td class="num">70%</td><td class="num">83%</td><td class="num">23</td></tr>
+        <tr><td>Busy freelancer</td><td class="num">67%</td><td class="num">64%</td><td class="num">68%</td><td class="num">82%</td><td class="num">22</td></tr>
+        <tr><td>Budget-conscious student</td><td class="num">59%</td><td class="num">33%</td><td class="num">48%</td><td class="num">62%</td><td class="num">21</td></tr>
       </tbody>
     </table>
-    <p class="eq" style="font-size:15px">Small samples, so the 95% intervals are wide (e.g. CFO 74–100%). Every prediction is committed in <code>eval/results.json</code>.</p>
+    <p class="eq" style="font-size:15px">All 77 answers: 72% vs 56% majority and 64% crowd. Honest note: on these scripted example brains the role name alone scores 77%, so the real test is brains of real people. Every prediction is in <code>eval/results.json</code>.</p>
   </section>
 
   <section>

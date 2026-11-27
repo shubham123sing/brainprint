@@ -16,6 +16,24 @@ Generated 2026-11-26 by `npm run eval` (web/scripts/eval.ts) on a copy of `graph
 | Cautious investor (example) | 1 answer, 22 example | 23 | **67%** (52%–74%) · CI 45%–81% · κ 0.451 · p 0.754 · 91% by LLM (rest: graph fallback after rate limits) | **55%** (44%–65%) · CI 37%–74% · κ 0.048 · p 1 | 61% | 70% |
 | Skeptical CFO (example) | 11 talk | 11 | **97%** (91%–100%) · CI 74%–100% · κ 0.921 · p 0.5 · 94% by LLM (rest: graph fallback after rate limits) | **61%** (46%–73%) · CI 35%–85% · κ -0.117 · p 1 | 73% | 73% |
 
+## Three predictors on the same held-out answers
+
+- **Evidence only:** the LLM reads only this brain's answers, retrieved and ordered by the graph (the original design).
+- **Role name only:** the LLM is told only the role ("Skeptical CFO"), no answers, no graph: a stereotype.
+- **Hybrid:** the LLM starts from the role and lets this brain's own answers override it where they differ.
+
+Evidence and hybrid: mean over 3 seeds (range). Role name only: one run (it does not depend on the split).
+
+| Brain | n | Evidence only | Role name only | Hybrid | Hybrid vs evidence (p) | Hybrid vs name (p) |
+|---|---|---|---|---|---|---|
+| Budget-conscious student | 21 | **52%** (43%–57%) | 62% | **59%** (57%–62%) | 0.25 | 1 |
+| Busy freelancer (example) | 22 | **65%** (59%–73%) | 82% | **67%** (64%–68%) | 1 | 0.453 |
+| Cautious investor (example) | 23 | **67%** (52%–74%) | 83% | **80%** (74%–83%) | 0.016 | 1 |
+| Skeptical CFO (example) | 11 | **97%** (91%–100%) | 82% | **91%** (82%–100%) | 1 | 1 |
+| **All brains (weighted)** | 77 | **67%** | **77%** | **72%** | | |
+
+Talk → Quiz with the hybrid (Budget-conscious student): **8/14** (CI 33%–79%).
+
 ## Talk → Quiz transfer
 
 Learn only from what the person said in Talk mode, then predict every answer they later gave in Quiz mode.
