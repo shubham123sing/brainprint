@@ -8,7 +8,7 @@ REMOTE="$(git -C "$ROOT" remote get-url origin)"
 TMP="$(mktemp -d)"
 cp -r "$ROOT/site/." "$TMP/"
 rm -f "$TMP/publish.sh"
-cp "$ROOT/video/out/brainprint_demo.mp4" "$TMP/"
+cp "$ROOT/video/out/brainprint_demo_v3.mp4" "$TMP/brainprint_demo.mp4"   # the current 1:39 cut
 touch "$TMP/.nojekyll"
 cd "$TMP"
 git init -q -b gh-pages
